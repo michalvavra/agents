@@ -1,0 +1,13 @@
+{
+	"name": "web",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Chrome-based web browsing toolkit for LLM agents",
+	"license": "MIT",
+	"dependencies": {
+		"@mozilla/readability": "^0.6.0",
+		"jsdom": "^27.0.1",
+		"node-html-markdown": "^2.0.0",
+		"puppeteer": "^24.0.0"
+	}
+}

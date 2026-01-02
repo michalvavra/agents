@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Lockfiles (regenerated on install)
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*~
+.idea/
+.vscode/
