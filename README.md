@@ -2,11 +2,6 @@
 
 Configuration for AI coding agents.
 
-## Credits
-
-- [badlogic/pi-skills](https://github.com/badlogic/pi-skills)
-- [steipete/agent-scripts](https://github.com/steipete/agent-scripts)
-
 ## Setup
 
 ### [pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent)
@@ -21,3 +16,9 @@ ln -sf {baseDir}/agents/pi/hooks ~/.pi/agent/hooks
 ## Skills
 
 Skills provide specialized instructions for specific tasks. They follow the [Agent Skills Specification](https://agentskills.io/specification).
+
+## Credits
+
+- [badlogic/pi-skills](https://github.com/badlogic/pi-skills)
+- [steipete/agent-scripts](https://github.com/steipete/agent-scripts)
+- [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff)
