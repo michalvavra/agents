@@ -3,7 +3,7 @@ name: write-docs
 description: Write AI-scannable technical documentation.
 ---
 
-# AI Documentation
+# Write Documentation
 
 Documentation that is scannable, consistent, and actionable for AI agents.
 

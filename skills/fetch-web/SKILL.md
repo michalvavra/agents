@@ -4,7 +4,7 @@ description: Fetch web pages, scrape content, fill forms, take screenshots.
 compatibility: Requires Node.js 18+, Chrome/Chromium. Run `npm install` in {baseDir}/scripts first.
 ---
 
-# web
+# Fetch Web
 
 Chrome-based web browsing. Extracts content as markdown. [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view) auto-detected.
 

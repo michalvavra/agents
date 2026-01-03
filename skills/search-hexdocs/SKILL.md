@@ -4,7 +4,7 @@ description: Search Hex package documentation for Elixir/Erlang.
 compatibility: Requires Node.js 18+. Run `npm install` in {baseDir}/scripts first.
 ---
 
-# hexdocs
+# Search hexdocs
 
 Search [hexdocs.pm](https://hexdocs.pm) documentation.
 

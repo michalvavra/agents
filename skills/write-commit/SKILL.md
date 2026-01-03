@@ -3,7 +3,7 @@ name: write-commit
 description: Write well-structured commit messages.
 ---
 
-# Commit Messages
+# Write Commit
 
 ## Conventions
 
