@@ -140,7 +140,7 @@ async function main() {
 
 		// Handle cookies mode
 		if (args.cookies) {
-			const cookies = await page.cookies();
+			const cookies = await page.browserContext().cookies();
 			for (const cookie of cookies) {
 				console.log(`${cookie.name}: ${cookie.value}`);
 				console.log(`  domain: ${cookie.domain}`);
