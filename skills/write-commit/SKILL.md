@@ -10,6 +10,7 @@ description: Write well-structured commit messages.
 - Check repo's existing commits first (`git log --oneline -20`)
 - Subject: imperative mood, 50 chars max, capitalized, no period
 - Body: wrap at 72 chars, explain what and why (not how)
+- Skip body for trivial/self-explanatory changes (renames, typos, simple fixes)
 - Use conventional prefixes (`feat:`, `fix:`, `docs:`) only if repo uses them
 
 ## Format
@@ -30,10 +31,18 @@ Fixes #123
 
 ## Examples
 
+Subject-only (trivial changes):
+```
+Fix typo in README
+```
+```
+Rename auth module to authentication
+```
 ```
 Add input validation for email field
 ```
 
+With body (complex changes):
 ```
 Refactor authentication to use JWT
 
