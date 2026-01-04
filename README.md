@@ -7,11 +7,25 @@ Configuration for AI coding agents.
 ### [pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent)
 
 ```bash
+ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
+ln -sf {baseDir}/agents/pi/settings.json ~/.pi/agent/settings.json
 ln -sf {baseDir}/skills ~/.pi/agent/skills
-ln -sf {baseDir}/agents/pi/toplevel-AGENTS.md ~/.pi/agent/AGENTS.md
 ln -sf {baseDir}/agents/pi/commands ~/.pi/agent/commands
 ln -sf {baseDir}/agents/pi/hooks ~/.pi/agent/hooks
 ```
+
+pi loads skills from `~/.codex/skills/` first, then from `~/.pi/agent/skills/` ([source](https://github.com/badlogic/pi-mono/blob/97bb411988d4d8dec5f531b390b86530af755718/packages/coding-agent/src/core/skills.ts#L414-L416)).
+
+### [Codex](https://developers.openai.com/codex)
+
+Copy skills (Codex [ignores symlinked directories](https://developers.openai.com/codex/skills/create-skill#skill-doesnt-appear))
+
+```bash
+ln -sf {baseDir}/AGENTS.md ~/.codex/AGENTS.md
+cp -r {baseDir}/skills/ ~/.codex/skills/
+```
+
+See [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) for details.
 
 ## Skills
 
