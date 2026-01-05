@@ -1,4 +1,4 @@
-import type { HookAPI } from "@mariozechner/pi-coding-agent/hooks";
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import * as path from "node:path";
 
 /**
@@ -6,7 +6,7 @@ import * as path from "node:path";
  * - Blocks dangerous bash commands (rm -rf, sudo, chmod 777, etc.)
  * - Protects sensitive paths from writes (.env, node_modules, .git, keys)
  */
-export default function (pi: HookAPI) {
+export default function (pi: ExtensionAPI) {
   const dangerousCommands = [
     { pattern: /\brm\s+(-[^\s]*r|--recursive)/, desc: "recursive delete" }, // rm -rf, rm -r, rm --recursive
     { pattern: /\bsudo\b/, desc: "sudo command" }, // sudo anything

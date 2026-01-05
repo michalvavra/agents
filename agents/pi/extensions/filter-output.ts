@@ -1,10 +1,10 @@
-import type { HookAPI } from "@mariozechner/pi-coding-agent/hooks";
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 /**
  * Filter or transform tool results before the LLM sees them.
  * Redacts sensitive data like API keys, tokens, passwords, etc.
  */
-export default function (pi: HookAPI) {
+export default function (pi: ExtensionAPI) {
   const sensitivePatterns = [
     { pattern: /\b(sk-[a-zA-Z0-9]{20,})\b/g, replacement: "[OPENAI_KEY_REDACTED]" }, // sk-abc123...
     { pattern: /\b(ghp_[a-zA-Z0-9]{36,})\b/g, replacement: "[GITHUB_TOKEN_REDACTED]" }, // ghp_xxxx...

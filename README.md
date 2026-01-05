@@ -10,8 +10,8 @@ Configuration for AI coding agents.
 ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
 ln -sf {baseDir}/agents/pi/settings.json ~/.pi/agent/settings.json
 ln -sf {baseDir}/skills ~/.pi/agent/skills
-ln -sf {baseDir}/agents/pi/commands ~/.pi/agent/commands
-ln -sf {baseDir}/agents/pi/hooks ~/.pi/agent/hooks
+ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
+ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
 ```
 
 pi loads skills from `~/.codex/skills/` first, then from `~/.pi/agent/skills/` ([source](https://github.com/badlogic/pi-mono/blob/97bb411988d4d8dec5f531b390b86530af755718/packages/coding-agent/src/core/skills.ts#L414-L416)).
