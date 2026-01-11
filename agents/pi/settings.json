@@ -3,8 +3,8 @@
     "enableCodexUser": false,
     "enableClaudeUser": false
   },
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.2-codex",
   "defaultThinkingLevel": "high",
-  "lastChangelogVersion": "0.36.0"
+  "lastChangelogVersion": "0.42.5"
 }
