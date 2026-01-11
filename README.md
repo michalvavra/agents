@@ -9,6 +9,7 @@ Configuration for AI coding agents.
 ```bash
 ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
 ln -sf {baseDir}/agents/pi/settings.json ~/.pi/agent/settings.json
+ln -sf {baseDir}/agents/pi/models.json ~/.pi/agent/models.json
 ln -sf {baseDir}/skills ~/.pi/agent/skills
 ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
 ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
