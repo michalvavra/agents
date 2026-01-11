@@ -15,8 +15,6 @@ ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
 ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
 ```
 
-pi loads skills from `~/.codex/skills/` first, then from `~/.pi/agent/skills/` ([source](https://github.com/badlogic/pi-mono/blob/97bb411988d4d8dec5f531b390b86530af755718/packages/coding-agent/src/core/skills.ts#L414-L416)).
-
 ### [Codex](https://developers.openai.com/codex)
 
 Copy skills (Codex [ignores symlinked directories](https://developers.openai.com/codex/skills/create-skill#skill-doesnt-appear))
