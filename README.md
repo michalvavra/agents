@@ -24,7 +24,7 @@ ln -sf {baseDir}/AGENTS.md ~/.codex/AGENTS.md
 cp -r {baseDir}/skills/ ~/.codex/skills/
 ```
 
-See [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) for details.
+See OpenAI's [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) documentation for details.
 
 ## Skills
 
