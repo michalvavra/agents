@@ -26,6 +26,13 @@ cp -r {baseDir}/skills/ ~/.codex/skills/
 
 See OpenAI's [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) documentation for details.
 
+### [Claude Code](https://code.claude.com/)
+
+```bash
+ln -sf {baseDir}/AGENTS.md ~/.claude/CLAUDE.md
+ln -sf {baseDir}/skills {workspaceDir}/.claude/skills
+```
+
 ## Skills
 
 Skills provide specialized instructions for specific tasks. They follow the [Agent Skills Specification](https://agentskills.io/specification).
