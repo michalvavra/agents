@@ -30,6 +30,32 @@ Use `mcporter list rohlik --schema` to identify the exact checkout tool name and
 5. If checkout requires a slot, use the slot tool from the schema.
 6. Ask for explicit confirmation before checkout.
 
+## Common Tasks
+
+Favorites:
+
+```bash
+npx mcporter call rohlik.get_all_user_favorites
+npx mcporter call rohlik.get_user_favorites_from_categories category_ids='[300105000]'
+```
+
+Shopping lists:
+
+```bash
+npx mcporter call rohlik.get_user_shopping_lists_preview
+npx mcporter call rohlik.get_user_shopping_list_detail shopping_list_id=12345
+npx mcporter call rohlik.create_shopping_list name="Weekly Groceries"
+npx mcporter call rohlik.add_products_to_shopping_list list_id=12345 product_id=1234567 amount=2
+```
+
+Order history:
+
+```bash
+npx mcporter call rohlik.fetch_orders limit=2
+npx mcporter call rohlik.fetch_orders date_from=2025-12-01 date_to=2025-12-31
+npx mcporter call rohlik.repeat_order order_id=12345678
+```
+
 ## Examples
 
 Search, add, and review cart:
@@ -48,7 +74,7 @@ MCPorter returns JSON by default. Pipe through `jq` when you need structured fil
 
 Never run checkout or order submission without explicit user confirmation.
 
-## Reference
+---
 
-- See `references/setup.md` for setup details and device approval on first use.
-- Prefer environment variables if you do not want credentials stored in files.
+See [references/setup.md](references/setup.md) for setup details and device approval on first use.
+See [references/examples.md](references/examples.md) for favorites, lists, and order flows.
