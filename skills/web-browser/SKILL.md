@@ -1,18 +1,18 @@
 ---
-name: agent-browser
-description: Headless browser CLI for navigation, snapshots, and element actions.
+name: web-browser
+description: Headless web browser CLI for navigation, snapshots, and element actions.
 compatibility: Requires Node.js 18+, agent-browser CLI, and Chromium download via `agent-browser install`. Linux may require `agent-browser install --with-deps`.
 ---
 
-# Agent Browser
+# Web Browser
 
-Headless browser automation CLI optimized for AI workflows using snapshots and refs.
+Headless web browser automation CLI optimized for AI workflows using snapshots and refs.
 
 ## Usage
 
 ```bash
 agent-browser open https://example.com
-agent-browser snapshot -i --json
+agent-browser snapshot -i --json > /tmp/agent-browser-snapshot.json
 agent-browser click @e2
 agent-browser fill @e3 "user@example.com"
 agent-browser get text @e1
@@ -23,7 +23,7 @@ agent-browser close
 ## Workflow
 
 1. Open a URL with `open`.
-2. Create a snapshot with `snapshot -i --json` and identify refs.
+2. Create a snapshot in `/tmp/` with `agent-browser snapshot -i --json > /tmp/agent-browser-snapshot.json` and identify refs.
 3. Act using refs with `click`, `fill`, or `get text`.
 4. Capture output with `screenshot` or `get` commands.
 5. Close the session with `close`.
