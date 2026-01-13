@@ -40,4 +40,6 @@ IN PROGRESS: Current state + next step
 BLOCKERS: What's preventing progress
 ```
 
+---
+
 Use `bd --help` or see [references/examples.md](references/examples.md) for all commands.

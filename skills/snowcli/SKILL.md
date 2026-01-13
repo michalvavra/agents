@@ -51,5 +51,7 @@ Available formats: `json`, `csv`, `tsv`, `plain`, `table` (default).
 snow sql -q "SHOW TABLES" -c connection_name
 ```
 
+---
+
 See [references/setup.md](references/setup.md) for configuration and authentication.
 See [references/examples.md](references/examples.md) for query patterns and workflows.
