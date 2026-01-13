@@ -51,9 +51,9 @@ EXAMPLES
     <name> arg1 arg2
 ```
 
-## Implementation
+---
 
-- [references/node-js.md](references/node-js.md) - Node.js with parseArgs
-- [references/python-uv.md](references/python-uv.md) - Python with uv
+See [references/node-js.md](references/node-js.md) - Node.js with parseArgs
+See [references/python-uv.md](references/python-uv.md) - Python with uv
 
 See [clig.dev](https://clig.dev/) for comprehensive guidelines.

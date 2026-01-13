@@ -32,4 +32,6 @@ gog sheets get <spreadsheetId> 'Sheet1!A1:B10'
 
 Use `--json` for parseable output, `--help` on any command for options.
 
+---
+
 See [references/examples.md](references/examples.md) for Gmail query syntax, batch operations, workflows.

@@ -43,6 +43,6 @@ AGENT_BROWSER_SESSION=agent1 agent-browser click @e2
 agent-browser session list
 ```
 
-## Reference
+---
 
 See [references/commands.md](references/commands.md) for command coverage and options.
