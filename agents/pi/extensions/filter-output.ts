@@ -41,6 +41,9 @@ export default function (pi: ExtensionAPI) {
 
     if (event.toolName === "read") {
       const filePath = event.input.path as string;
+      if (/(^|\/)\.env\.example$/i.test(filePath)) {
+        return undefined;
+      }
       for (const pattern of sensitiveFiles) {
         if (pattern.test(filePath)) {
           ctx.ui.notify(`🔒 Redacted contents of sensitive file: ${filePath}`, "info");
