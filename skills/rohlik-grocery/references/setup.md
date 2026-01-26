@@ -9,7 +9,7 @@ Create a MCPorter config in `~/.mcporter/mcporter.json` (global) or `config/mcpo
   "mcpServers": {
     "rohlik": {
       "description": "Rohlik.cz MCP server",
-      "baseUrl": "https://mcp.rohlik.cz/mcp/",
+      "baseUrl": "https://mcp.rohlik.cz/mcp",
       "headers": {
         "rhl-email": "${RHL_EMAIL}",
         "rhl-pass": "${RHL_PASS}"
