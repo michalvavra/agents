@@ -1,10 +1,6 @@
 {
-  "skills": {
-    "enableCodexUser": false,
-    "enableClaudeUser": false
-  },
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.2-codex",
-  "defaultThinkingLevel": "medium",
-  "lastChangelogVersion": "0.49.3"
+  "defaultThinkingLevel": "high",
+  "lastChangelogVersion": "0.50.1"
 }

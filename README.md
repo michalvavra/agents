@@ -8,9 +8,9 @@ Configuration for AI coding agents.
 
 ```bash
 ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
+ln -sf {baseDir}/skills ~/.pi/agent/skills
 ln -sf {baseDir}/agents/pi/settings.json ~/.pi/agent/settings.json
 ln -sf {baseDir}/agents/pi/models.json ~/.pi/agent/models.json
-ln -sf {baseDir}/skills ~/.pi/agent/skills
 ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
 ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
 ```
@@ -42,3 +42,4 @@ Skills provide specialized instructions for specific tasks. They follow the [Age
 - [badlogic/pi-skills](https://github.com/badlogic/pi-skills)
 - [steipete/agent-scripts](https://github.com/steipete/agent-scripts)
 - [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff)
+- [trancong12102/pi-skills](https://github.com/trancong12102/pi-skills)
