@@ -2,9 +2,31 @@
 
 Configuration for AI coding agents.
 
+## [pi][pi-coding-agent] extensions
+
+- `skill-dollar.ts`: suggests `$skill-name` completions in the editor and injects skill usage guidance when mentioned. Idea from Codex.
+
+### Try without installing
+
+```bash
+pi -e git:github.com/michalvavra/agents
+```
+
+or
+
+```bash
+pi --no-skills --no-extensions --no-prompt-templates --no-themes -e git:github.com/michalvavra/agents
+```
+
+### Install
+
+```bash
+pi install git:michalvavra/agents
+```
+
 ## Setup
 
-### [pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent)
+### pi locally
 
 ```bash
 ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
@@ -30,18 +52,8 @@ See OpenAI's [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md
 
 ```bash
 ln -sf {baseDir}/AGENTS.md ~/.claude/CLAUDE.md
-ln -sf {baseDir}/skills {workspaceDir}/.claude/skills
+ln -sf {baseDir}/skills ~/.claude/skills
 ```
-
-## Skills
-
-Skills provide specialized instructions for specific tasks. They follow the [Agent Skills Specification](https://agentskills.io/specification).
-
-## pi extensions
-
-- `filter-output.ts`: redacts sensitive data from tool output before the model sees it.
-- `security.ts`: blocks dangerous bash commands and protected file writes.
-- `skill-dollar.ts`: suggests `$skill-name` completions in the editor and injects skill usage guidance when mentioned. Idea from Codex.
 
 ## Credits
 
@@ -49,3 +61,6 @@ Skills provide specialized instructions for specific tasks. They follow the [Age
 - [steipete/agent-scripts](https://github.com/steipete/agent-scripts)
 - [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff)
 - [trancong12102/pi-skills](https://github.com/trancong12102/pi-skills)
+- [hjanuschka/shitty-extensions](https://github.com/hjanuschka/shitty-extensions)
+
+[pi-coding-agent]: https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent
