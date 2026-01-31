@@ -63,4 +63,4 @@ ln -sf {baseDir}/skills ~/.claude/skills
 - [trancong12102/pi-skills](https://github.com/trancong12102/pi-skills)
 - [hjanuschka/shitty-extensions](https://github.com/hjanuschka/shitty-extensions)
 
-[pi-coding-agent]: https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent
+[pi-coding-agent]: https://shittycodingagent.ai/
