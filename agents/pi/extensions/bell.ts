@@ -7,6 +7,6 @@ function notify(title: string, body: string): void {
 export default function (pi: ExtensionAPI) {
 	pi.on("agent_end", async (_event, ctx) => {
 		if (!ctx.hasUI) return;
-		notify("Pi", "Agent finished. Ready for your next prompt.");
+		notify("Pi", "Ready for your next shitty prompt.");
 	});
 }
