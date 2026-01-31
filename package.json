@@ -8,7 +8,7 @@
   ],
   "license": "MIT-0",
   "files": [
-    "extensions/**/*.ts",
+    "agents/**/*",
     "skills/**/*",
     "README.md"
   ],
