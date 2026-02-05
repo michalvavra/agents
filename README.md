@@ -31,10 +31,22 @@ pi install git:michalvavra/agents
 ```bash
 ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
 ln -sf {baseDir}/skills ~/.pi/agent/skills
-ln -sf {baseDir}/agents/pi/settings.json ~/.pi/agent/settings.json
-ln -sf {baseDir}/agents/pi/models.json ~/.pi/agent/models.json
 ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
 ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
+```
+
+Create settings in `~/.pi/agent/settings.json` (global) or `.pi/settings.json` (project). Example:
+
+```json
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.2-codex",
+  "defaultThinkingLevel": "medium",
+  "skills": [
+    "~/Workspace/agents/skills"
+  ],
+  "packages": ["npm:pi-qmd"]
+}
 ```
 
 ### [Codex](https://developers.openai.com/codex)
@@ -63,4 +75,4 @@ ln -sf {baseDir}/skills ~/.claude/skills
 - [trancong12102/pi-skills](https://github.com/trancong12102/pi-skills)
 - [hjanuschka/shitty-extensions](https://github.com/hjanuschka/shitty-extensions)
 
-[pi-coding-agent]: https://shittycodingagent.ai/
+[pi-coding-agent]: https://pi.dev/
