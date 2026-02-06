@@ -1,0 +1,24 @@
+{
+  "boundary": "home",
+  "resources": {
+    "skills": {
+      "enabled": true,
+      "searchPaths": [
+        ".pi/skills",
+        ".agents/skills"
+      ]
+    },
+    "prompts": {
+      "enabled": false,
+      "searchPaths": [
+        ".pi/prompts"
+      ]
+    },
+    "themes": {
+      "enabled": false,
+      "searchPaths": [
+        ".pi/themes"
+      ]
+    }
+  }
+}

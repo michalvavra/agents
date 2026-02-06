@@ -248,24 +248,4 @@ export default function (pi: ExtensionAPI) {
       return new SkillSuggestEditor(tui, theme, keybindings, skills, setWidget);
     });
   });
-
-  const hasSkillMention = (text: string) => {
-    for (const match of text.matchAll(SKILL_MENTION_REGEX)) {
-      if ((match[1]?.length ?? 0) <= MAX_SKILL_NAME_LENGTH) return true;
-    }
-
-    return false;
-  };
-
-  pi.on("before_agent_start", async (event) => {
-    if (!hasSkillMention(event.prompt)) return undefined;
-    return {
-      message: {
-        customType: "skill-dollar",
-        content:
-          "Use every `$skill-name` mentioned in the prompt. If any are missing or unreadable, say so.",
-        display: true,
-      },
-    };
-  });
 }
