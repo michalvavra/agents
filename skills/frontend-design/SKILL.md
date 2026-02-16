@@ -1,7 +1,7 @@
 ---
 name: frontend-design
 description: "Design and implement distinctive, production-ready frontend interfaces with strong aesthetic direction. Use when asked to create or restyle web pages, components, or applications (HTML/CSS/JS, React, Vue, etc.)."
-license: MIT (source: https://github.com/mitsuhiko/agent-stuff/blob/e707652bc7a1a55a42c983cd78803cc2feb38be4/skills/frontend-design/SKILL.md)
+license: "MIT (source: https://github.com/mitsuhiko/agent-stuff/blob/e707652bc7a1a55a42c983cd78803cc2feb38be4/skills/frontend-design/SKILL.md)"
 ---
 
 # Frontend Design Skill
