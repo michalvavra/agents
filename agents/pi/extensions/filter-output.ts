@@ -33,7 +33,7 @@ export default function (pi: ExtensionAPI) {
 
   const sensitiveFiles = [
     /\.env$/, // .env
-    /\.env\.[^/]+$/, // .env.local, .env.production
+    /\.env\.(?!example$)[^/]+$/, // .env.local, .env.production (but not .env.example)
     /\.dev\.vars($|\.[^/]+$)/, // .dev.vars
     /secrets?\.(json|ya?ml|toml)$/i, // secrets.json, secret.yaml
     /credentials/i, // credentials, CREDENTIALS

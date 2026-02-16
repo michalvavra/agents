@@ -37,14 +37,14 @@ export default function (pi: ExtensionAPI) {
   ];
 
   const dangerousBashWrites = [
-    />\s*\.env/, // echo x > .env
+    />\s*\.env(?!\.example)(\b|$)/, // echo x > .env, .env.local (but not .env.example)
     />\s*\.dev\.vars/, // echo x > .dev.vars
     />\s*.*\.pem/, // echo x > key.pem
     />\s*.*\.key/, // echo x > secret.key
-    /tee\s+.*\.env/, // cat x | tee .env
+    /tee\s+.*\.env(?!\.example)(\b|$)/, // cat x | tee .env, .env.local (but not .env.example)
     /tee\s+.*\.dev\.vars/, // cat x | tee .dev.vars
-    /cp\s+.*\s+\.env/, // cp x .env
-    /mv\s+.*\s+\.env/, // mv x .env
+    /cp\s+.*\s+\.env(?!\.example)(\b|$)/, // cp x .env, .env.local (but not .env.example)
+    /mv\s+.*\s+\.env(?!\.example)(\b|$)/, // mv x .env, .env.local (but not .env.example)
   ];
 
   pi.on("tool_call", async (event, ctx) => {
