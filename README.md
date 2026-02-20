@@ -2,37 +2,26 @@
 
 Configuration for AI coding agents.
 
-## [pi][pi-coding-agent] extensions
-
-- `skill-dollar.ts`: suggests `$skill-name` completions in the editor and injects skill usage guidance when mentioned. Idea from Codex.
-
-### Try without installing
-
-```bash
-pi -e git:github.com/michalvavra/agents
-```
-
-or
-
-```bash
-pi --no-skills --no-extensions --no-prompt-templates --no-themes -e git:github.com/michalvavra/agents
-```
-
-### Install
-
-```bash
-pi install git:michalvavra/agents
-```
-
 ## Setup
 
-### pi locally
+```bash
+git clone https://github.com/michalvavra/agents.git
+cd agents
+```
+
+### Skills
 
 ```bash
-ln -sf {baseDir}/AGENTS.md ~/.pi/agent/AGENTS.md
-ln -sf {baseDir}/skills ~/.pi/agent/skills
-ln -sf {baseDir}/agents/pi/prompts ~/.pi/agent/prompts
-ln -sf {baseDir}/agents/pi/extensions ~/.pi/agent/extensions
+mkdir -p ~/.agents
+ln -sf {thisDir}/skills ~/.agents/skills
+```
+
+### [Pi][pi-coding-agent]
+
+```bash
+ln -sf {thisDir}/AGENTS.md ~/.pi/agent/AGENTS.md
+ln -sf {thisDir}/agents/pi/prompts ~/.pi/agent/prompts
+ln -sf {thisDir}/agents/pi/extensions ~/.pi/agent/extensions
 ```
 
 Create settings in `~/.pi/agent/settings.json` (global) or `.pi/settings.json` (project). Example:
@@ -40,10 +29,10 @@ Create settings in `~/.pi/agent/settings.json` (global) or `.pi/settings.json` (
 ```json
 {
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.2-codex",
+  "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "medium",
   "skills": [
-    "~/Workspace/agents/skills"
+    "~/.agents/skills"
   ],
   "packages": ["npm:pi-qmd"]
 }
@@ -51,20 +40,15 @@ Create settings in `~/.pi/agent/settings.json` (global) or `.pi/settings.json` (
 
 ### [Codex](https://developers.openai.com/codex)
 
-Copy skills (Codex [ignores symlinked directories](https://developers.openai.com/codex/skills/create-skill#skill-doesnt-appear))
-
 ```bash
-ln -sf {baseDir}/AGENTS.md ~/.codex/AGENTS.md
-cp -r {baseDir}/skills/ ~/.codex/skills/
+ln -sf {thisDir}/AGENTS.md ~/.codex/AGENTS.md
 ```
-
-See OpenAI's [Skills](https://developers.openai.com/codex/skills) and [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) documentation for details.
 
 ### [Claude Code](https://code.claude.com/)
 
 ```bash
-ln -sf {baseDir}/AGENTS.md ~/.claude/CLAUDE.md
-ln -sf {baseDir}/skills ~/.claude/skills
+ln -sf {thisDir}/AGENTS.md ~/.claude/CLAUDE.md
+ln -sf {thisDir}/skills ~/.claude/skills
 ```
 
 ## Credits
