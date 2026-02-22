@@ -24,20 +24,6 @@ ln -sf {thisDir}/agents/pi/prompts ~/.pi/agent/prompts
 ln -sf {thisDir}/agents/pi/extensions ~/.pi/agent/extensions
 ```
 
-Create settings in `~/.pi/agent/settings.json` (global) or `.pi/settings.json` (project). Example:
-
-```json
-{
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.3-codex",
-  "defaultThinkingLevel": "medium",
-  "skills": [
-    "~/.agents/skills"
-  ],
-  "packages": ["npm:pi-qmd"]
-}
-```
-
 ### [Codex](https://developers.openai.com/codex)
 
 ```bash
