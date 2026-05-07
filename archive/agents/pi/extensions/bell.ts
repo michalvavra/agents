@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 function notify(title: string, body: string): void {
 	process.stdout.write(`\x1b]777;notify;${title};${body}\x07`);

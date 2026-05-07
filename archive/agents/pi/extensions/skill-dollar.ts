@@ -1,11 +1,11 @@
-import type { ExtensionAPI, LoadSkillsResult } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, LoadSkillsResult } from "@earendil-works/pi-coding-agent";
 import {
   CustomEditor,
   getSelectListTheme,
   loadSkills,
   SettingsManager,
-} from "@mariozechner/pi-coding-agent";
-import { fuzzyFilter, Key, matchesKey, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-coding-agent";
+import { fuzzyFilter, Key, matchesKey, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 type SkillInfo = Pick<LoadSkillsResult["skills"][number], "name" | "description" | "source">;
 
