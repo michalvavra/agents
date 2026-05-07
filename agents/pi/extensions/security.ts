@@ -8,26 +8,29 @@ import * as path from "node:path";
  */
 export default function (pi: ExtensionAPI) {
   const dangerousCommands = [
-    { pattern: /\brm\s+(-[^\s]*r|--recursive)/, desc: "recursive delete" }, // rm -rf, rm -r, rm --recursive
-    { pattern: /\bsudo\b/, desc: "sudo command" }, // sudo anything
-    { pattern: /\b(chmod|chown)\b.*777/, desc: "dangerous permissions" }, // chmod 777, chown 777
-    { pattern: /\bmkfs\b/, desc: "filesystem format" }, // mkfs.ext4, mkfs.xfs
-    { pattern: /\bdd\b.*\bof=\/dev\//, desc: "raw device write" }, // dd if=x of=/dev/sda
-    { pattern: />\s*\/dev\/sd[a-z]/, desc: "raw device overwrite" }, // echo x > /dev/sda
-    { pattern: /\bkill\s+-9\s+-1\b/, desc: "kill all processes" }, // kill -9 -1
-    { pattern: /:\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;/, desc: "fork bomb" }, // :(){:|:&};:
+    { pattern: /\brm\s+(-[^\s]*r|--recursive)/, desc: "recursive delete" },
+    { pattern: /\bsudo\b/, desc: "sudo command" },
+    { pattern: /\b(chmod|chown)\b.*777/, desc: "dangerous permissions" },
+    { pattern: /\bmkfs\b/, desc: "filesystem format" },
+    { pattern: /\bdd\b.*\bof=\/dev\//, desc: "raw device write" },
+    { pattern: />\s*\/dev\/sd[a-z]/, desc: "raw device overwrite" },
+    { pattern: /\bkill\s+-9\s+-1\b/, desc: "kill all processes" },
+    { pattern: /:\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;/, desc: "fork bomb" },
+    { pattern: /\bgit\s+clean\s+[^;&|]*-[^;&|]*[df]/, desc: "destructive git clean" },
+    { pattern: /\bgit\s+reset\s+--hard\b/, desc: "destructive git reset" },
+    { pattern: /\bgit\s+push\b[^;&|]*\s(?:--force|-f)\b/, desc: "force push" },
   ];
 
   const protectedPaths = [
-    { pattern: /\.env($|\.(?!example))/, desc: "environment file" }, // .env, .env.local (but not .env.example)
-    { pattern: /\.dev\.vars($|\.[^/]+$)/, desc: "dev vars file" }, // .dev.vars
-    { pattern: /node_modules\//, desc: "node_modules" }, // node_modules/
-    { pattern: /^\.git\/|\/\.git\//, desc: "git directory" }, // .git/
-    { pattern: /\.pem$|\.key$/, desc: "private key file" }, // *.pem, *.key
-    { pattern: /id_rsa|id_ed25519|id_ecdsa/, desc: "SSH key" }, // id_rsa, id_ed25519
-    { pattern: /\.ssh\//, desc: ".ssh directory" }, // .ssh/
-    { pattern: /secrets?\.(json|ya?ml|toml)$/i, desc: "secrets file" }, // secrets.json, secret.yaml
-    { pattern: /credentials/i, desc: "credentials file" }, // credentials, CREDENTIALS
+    { pattern: /(^|\/)\.env($|\.(?!example$))/, desc: "environment file" },
+    { pattern: /(^|\/)\.dev\.vars($|\.[^/]+$)/, desc: "dev vars file" },
+    { pattern: /(^|\/)node_modules\//, desc: "node_modules" },
+    { pattern: /^\.git\/|\/\.git\//, desc: "git directory" },
+    { pattern: /\.pem$|\.key$/, desc: "private key file" },
+    { pattern: /(^|\/)id_rsa$|(^|\/)id_ed25519$|(^|\/)id_ecdsa$/, desc: "SSH key" },
+    { pattern: /(^|\/)\.ssh\//, desc: ".ssh directory" },
+    { pattern: /(^|\/)secrets?\.(json|ya?ml|toml)$/i, desc: "secrets file" },
+    { pattern: /(^|\/)credentials/i, desc: "credentials file" },
   ];
 
   const softProtectedPaths = [
@@ -36,15 +39,11 @@ export default function (pi: ExtensionAPI) {
     { pattern: /pnpm-lock\.yaml$/, desc: "pnpm-lock.yaml" },
   ];
 
+  const protectedShellPath = String.raw`(?:\.\/)?(?:[^\s;&|<>]*\/)?(?:\.env(?:\.(?!example\b)[^\s;&|<>]+)?|\.dev\.vars(?:\.[^\s;&|<>]+)?|[^\s;&|<>]+\.(?:pem|key))`;
   const dangerousBashWrites = [
-    />\s*\.env(?!\.example)(\b|$)/, // echo x > .env, .env.local (but not .env.example)
-    />\s*\.dev\.vars/, // echo x > .dev.vars
-    />\s*.*\.pem/, // echo x > key.pem
-    />\s*.*\.key/, // echo x > secret.key
-    /tee\s+.*\.env(?!\.example)(\b|$)/, // cat x | tee .env, .env.local (but not .env.example)
-    /tee\s+.*\.dev\.vars/, // cat x | tee .dev.vars
-    /cp\s+.*\s+\.env(?!\.example)(\b|$)/, // cp x .env, .env.local (but not .env.example)
-    /mv\s+.*\s+\.env(?!\.example)(\b|$)/, // mv x .env, .env.local (but not .env.example)
+    new RegExp(String.raw`(?:>|>>|1>|2>|&>|tee\s+(?:-[a-zA-Z]+\s+)*)\s*${protectedShellPath}`),
+    new RegExp(String.raw`\b(?:cp|mv)\b[^;&|]*\s${protectedShellPath}(?:\s|$)`),
+    new RegExp(String.raw`\bcat\b[^;&|]*(?:>|>>)\s*${protectedShellPath}`),
   ];
 
   pi.on("tool_call", async (event, ctx) => {
@@ -57,7 +56,7 @@ export default function (pi: ExtensionAPI) {
             return { block: true, reason: `Blocked ${desc} (no UI to confirm)` };
           }
 
-          const ok = await ctx.ui.confirm(`⚠️ Dangerous command: ${desc}`, command);
+          const ok = await ctx.ui.confirm(`Dangerous command: ${desc}`, command);
 
           if (!ok) {
             return { block: true, reason: `Blocked ${desc} by user` };
@@ -68,7 +67,7 @@ export default function (pi: ExtensionAPI) {
 
       for (const pattern of dangerousBashWrites) {
         if (pattern.test(command)) {
-          ctx.ui.notify(`🛡️ Blocked bash write to protected path`, "warning");
+          if (ctx.hasUI) ctx.ui.notify("Blocked bash write to protected path", "warning");
           return { block: true, reason: "Bash command writes to protected path" };
         }
       }
@@ -82,7 +81,7 @@ export default function (pi: ExtensionAPI) {
 
       for (const { pattern, desc } of protectedPaths) {
         if (pattern.test(normalizedPath)) {
-          ctx.ui.notify(`🛡️ Blocked write to ${desc}: ${filePath}`, "warning");
+          if (ctx.hasUI) ctx.ui.notify(`Blocked write to ${desc}: ${filePath}`, "warning");
           return { block: true, reason: `Protected path: ${desc}` };
         }
       }
@@ -94,7 +93,7 @@ export default function (pi: ExtensionAPI) {
           }
 
           const ok = await ctx.ui.confirm(
-            `⚠️ Modifying ${desc}`,
+            `Modifying ${desc}`,
             `Are you sure you want to modify ${filePath}?`,
           );
 
