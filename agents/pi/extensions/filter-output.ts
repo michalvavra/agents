@@ -34,8 +34,16 @@ export default function (pi: ExtensionAPI) {
     { pattern: /\b(sk-or-v1-[a-zA-Z0-9_-]{20,})\b/g, replacement: "[OPENROUTER_KEY_REDACTED]" },
     { pattern: /\b(AIza[a-zA-Z0-9_-]{30,})\b/g, replacement: "[GOOGLE_KEY_REDACTED]" },
     {
-      pattern: /\b(CLOUDFLARE_API_TOKEN|CF_API_TOKEN)\s*=\s*[^\s'"]{20,}/gi,
-      replacement: "$1=[REDACTED]",
+      pattern: /\b(cf(?:k|ut|at)_[a-zA-Z0-9_-]{41,})\b/g,
+      replacement: "[CLOUDFLARE_TOKEN_REDACTED]",
+    },
+    {
+      pattern: /\b(CLOUDFLARE_API_TOKEN|CF_API_TOKEN)\s*=\s*['"]?[a-zA-Z0-9_-]{40,}['"]?/gi,
+      replacement: "$1=[CLOUDFLARE_TOKEN_REDACTED]",
+    },
+    {
+      pattern: /\b(CLOUDFLARE_API_KEY|CF_API_KEY)\s*=\s*['"]?[a-f0-9]{37,45}['"]?/gi,
+      replacement: "$1=[CLOUDFLARE_KEY_REDACTED]",
     },
     { pattern: /\b(npm_[a-zA-Z0-9]{20,})\b/g, replacement: "[NPM_TOKEN_REDACTED]" },
     { pattern: /\b(glpat-[a-zA-Z0-9_-]{20,})\b/g, replacement: "[GITLAB_TOKEN_REDACTED]" },
