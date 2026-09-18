@@ -1,6 +1,7 @@
 ---
 name: version-releases
 description: Use when preparing, reviewing, or documenting versioned app releases, changelogs, SemVer bumps, release commits, git tags, or tag-gated production deploys
+disable-model-invocation: true
 ---
 
 # Version Releases
