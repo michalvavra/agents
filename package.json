@@ -9,6 +9,9 @@
     "pi-skill"
   ],
   "license": "MIT-0",
+  "scripts": {
+    "test": "node --test tests/*.test.ts"
+  },
   "files": [
     "agents/**/*",
     "skills/**/*",
