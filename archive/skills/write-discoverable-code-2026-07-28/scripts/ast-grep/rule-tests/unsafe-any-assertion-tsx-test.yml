@@ -1,0 +1,10 @@
+id: unsafe-any-assertion-tsx
+valid:
+  - const card = value as BookingCardProps;
+  - const card = value as unknown;
+invalid:
+  - const card = value as any;
+  - |
+      export function BookingCard() {
+        return <article>{(value as any).title}</article>;
+      }

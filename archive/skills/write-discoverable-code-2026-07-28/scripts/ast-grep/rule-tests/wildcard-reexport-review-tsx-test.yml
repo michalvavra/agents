@@ -1,0 +1,10 @@
+id: wildcard-reexport-review-tsx
+valid:
+  - export { BookingCard } from './booking-card';
+  - export type { BookingCardProps } from './booking-card';
+invalid:
+  - export * from './booking-card';
+  - export type * from './booking-types';
+  - |
+      export *
+        from './reservation-form';

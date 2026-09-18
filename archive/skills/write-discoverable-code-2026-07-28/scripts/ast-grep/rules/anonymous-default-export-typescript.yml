@@ -1,0 +1,20 @@
+id: anonymous-default-export-typescript
+language: TypeScript
+severity: hint
+message: Name this default export so it can be searched and discussed directly.
+ignores:
+  - "**/generated/**"
+  - "**/*.d.ts"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+rule:
+  kind: export_statement
+  all:
+    - regex: '^export\s+default\b'
+    - any:
+        - regex: '^export\s+default\s+(?:async\s+)?function(?:\s*\*)?\s*\('
+        - regex: '^export\s+default\s+class(?:\s+extends\b[^{]*)?\s*\{'
+        - has:
+            kind: arrow_function

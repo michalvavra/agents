@@ -1,0 +1,19 @@
+id: anonymous-default-export-tsx
+valid:
+  - export default function BookingCard() { return <article />; }
+  - export default class BookingCard extends Component { render() { return <article />; } }
+  - |
+      const BookingCard = () => <article />;
+      export default BookingCard;
+  - |
+      export default { render: () => <article /> };
+invalid:
+  - export default function () { return <article />; }
+  - export default class extends Component { render() { return <article />; } }
+  - export default () => <article />
+  - |
+      export default (props: Props): ReactNode => <article>{props.title}</article>
+  - |
+      export default async () => (
+        <article />
+      )

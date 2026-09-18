@@ -1,0 +1,14 @@
+id: wildcard-reexport-review-typescript
+language: TypeScript
+severity: hint
+message: Confirm this wildcard re-export is a deliberate public boundary; otherwise prefer named exports.
+ignores:
+  - "**/generated/**"
+  - "**/*.d.ts"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+rule:
+  kind: export_statement
+  regex: '^export\s+(?:type\s+)?\*\s+from\b'

@@ -1,0 +1,19 @@
+id: anonymous-default-export-typescript
+valid:
+  - export default function loadReservation() {}
+  - export default class ReservationLoader {}
+  - export default class ReservationLoader extends BaseLoader {}
+  - |
+      const loadReservation = () => undefined;
+      export default loadReservation;
+  - export default { fetch() {} };
+  - |
+      export default { load: () => undefined };
+invalid:
+  - export default function () {}
+  - export default class {}
+  - export default class extends BaseLoader {}
+  - export default () => undefined
+  - |
+      export default (input: Input): Output => input
+  - export default async (request) => request

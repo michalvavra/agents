@@ -1,0 +1,13 @@
+id: unsafe-any-assertion-tsx
+language: Tsx
+severity: hint
+message: Preserve the boundary type instead of asserting any, unless this narrow shim is justified.
+ignores:
+  - "**/generated/**"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.tsx"
+  - "**/*.spec.tsx"
+rule:
+  kind: as_expression
+  regex: '\bas\s+any\b'

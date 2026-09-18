@@ -1,0 +1,14 @@
+id: unsafe-any-assertion-typescript
+language: TypeScript
+severity: hint
+message: Preserve the boundary type instead of asserting any, unless this narrow shim is justified.
+ignores:
+  - "**/generated/**"
+  - "**/*.d.ts"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+rule:
+  kind: as_expression
+  regex: '\bas\s+any\b'

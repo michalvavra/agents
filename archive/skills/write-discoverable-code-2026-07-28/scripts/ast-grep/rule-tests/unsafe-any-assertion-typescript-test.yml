@@ -1,0 +1,10 @@
+id: unsafe-any-assertion-typescript
+valid:
+  - const result = value as unknown;
+  - const result = value as ProviderResponse;
+  - const result = value satisfies ProviderResponse;
+invalid:
+  - const result = value as any;
+  - |
+      const result = response.body as
+        any;

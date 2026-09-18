@@ -1,0 +1,13 @@
+id: wildcard-reexport-review-tsx
+language: Tsx
+severity: hint
+message: Confirm this wildcard re-export is a deliberate public boundary; otherwise prefer named exports.
+ignores:
+  - "**/generated/**"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.tsx"
+  - "**/*.spec.tsx"
+rule:
+  kind: export_statement
+  regex: '^export\s+(?:type\s+)?\*\s+from\b'

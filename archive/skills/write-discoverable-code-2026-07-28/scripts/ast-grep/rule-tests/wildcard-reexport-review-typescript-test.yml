@@ -1,0 +1,10 @@
+id: wildcard-reexport-review-typescript
+valid:
+  - export { loadReservation } from './load-reservation';
+  - export { default as ReservationCard } from './reservation-card';
+invalid:
+  - export * from './reservation';
+  - export type * from './contracts';
+  - |
+      export *
+        from './provider';

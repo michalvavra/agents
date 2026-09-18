@@ -1,0 +1,19 @@
+id: anonymous-default-export-tsx
+language: Tsx
+severity: hint
+message: Name this default export so it can be searched and discussed directly.
+ignores:
+  - "**/generated/**"
+  - "**/fixtures/**"
+  - "**/__tests__/**"
+  - "**/*.test.tsx"
+  - "**/*.spec.tsx"
+rule:
+  kind: export_statement
+  all:
+    - regex: '^export\s+default\b'
+    - any:
+        - regex: '^export\s+default\s+(?:async\s+)?function(?:\s*\*)?\s*\('
+        - regex: '^export\s+default\s+class(?:\s+extends\b[^{]*)?\s*\{'
+        - has:
+            kind: arrow_function

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Discoverable Code"
+  short_description: "Make changed code easy to find and verify"
+  default_prompt: "Use $write-discoverable-code to make this code change easy for agents and humans to find, understand, and verify."
