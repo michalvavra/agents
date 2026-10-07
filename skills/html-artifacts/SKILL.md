@@ -9,7 +9,7 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 
 ## Files
 
-- `references/artifact.css`: the kit. Paste it **verbatim** into a `<style>` tag. Don't link to it.
+- `references/styles.css`: the kit. Paste it **verbatim** into a `<style>` tag. Don't link to it.
 - `references/example.html`: a sample page that uses every kit class.
 - `references/components.md`: optional components (timeline, steps, diff, matrix, checklist, diagram) to paste into the second `<style>`.
 - `references/genres/*.md`: what to write for each kind of artifact. **Read the one that matches before you write.**
@@ -17,7 +17,7 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 ## Workflow
 
 1. Pick the genre below and read its file. It gives the section order, the components and the writing rules.
-2. Start from the skeleton. Put the full contents of `artifact.css` into the first `<style>`.
+2. Start from the skeleton. Put the full contents of `styles.css` into the first `<style>`.
 3. Write plain semantic HTML: `main`, `h1`–`h4`, `p`, `ul`, `table`, `figure`, `details`. Most pages need only a few classes.
 4. Put artifact-specific CSS in the second `<style>`: snippets from `components.md`, then your own. See [Extending](#extending).
 5. Keep data inline (HTML, or JSON in `<script type="application/json" id="">`). No frameworks and no build step. The only external request allowed is syntax highlighting.
@@ -30,7 +30,7 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Short, specific title</title>
-<style>/* contents of references/artifact.css */</style>
+<style>/* contents of references/styles.css */</style>
 <style>/* components.md snippets + artifact-specific additions */</style>
 </head>
 <body>
