@@ -158,15 +158,15 @@ Number footnotes in order of first reference and put the block last in `main`. A
 
 ## Code highlighting
 
-Use [`@pierre/highlights`](https://www.jsdelivr.com/package/npm/@pierre/highlights). **Don't pin a version.** The unversioned jsDelivr URL always serves the latest release. Mark code with `class="language-…"` and put this before `</body>`:
+Use [`@pierre/highlights`](https://www.jsdelivr.com/package/npm/@pierre/highlights), pinned to `0.1.2`, with the `.min.js` files (jsDelivr minifies them on request). Use the version below by default; change it only on purpose. Mark code with `class="language-…"` and put this before `</body>`:
 
 ```html
 <script type="module">
-  const cdn = "https://cdn.jsdelivr.net/npm/@pierre/highlights/dist";
-  const { codeToHtml, isSupportedLanguage } = await import(`${cdn}/browser.js`);
+  const cdn = "https://cdn.jsdelivr.net/npm/@pierre/highlights@0.1.2/dist";
+  const { codeToHtml, isSupportedLanguage } = await import(`${cdn}/browser.min.js`);
   const [{ default: light }, { default: dark }] = await Promise.all([
-    import(`${cdn}/themes/pierre-light.js`),
-    import(`${cdn}/themes/pierre-dark.js`),
+    import(`${cdn}/themes/pierre-light.min.js`),
+    import(`${cdn}/themes/pierre-dark.min.js`),
   ]);
   const decoder = new TextDecoder();
   for (const code of document.querySelectorAll('pre > code[class*="language-"]')) {

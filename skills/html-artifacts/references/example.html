@@ -111,12 +111,12 @@ GROUP BY region;</code></pre>
 </main>
 
 <script type="module">
-  // Syntax highlighting with @pierre/highlights (unpinned = latest).
-  const cdn = "https://cdn.jsdelivr.net/npm/@pierre/highlights/dist";
-  const { codeToHtml, isSupportedLanguage } = await import(`${cdn}/browser.js`);
+  // Syntax highlighting with @pierre/highlights@0.1.2 (minified by jsDelivr).
+  const cdn = "https://cdn.jsdelivr.net/npm/@pierre/highlights@0.1.2/dist";
+  const { codeToHtml, isSupportedLanguage } = await import(`${cdn}/browser.min.js`);
   const [{ default: light }, { default: dark }] = await Promise.all([
-    import(`${cdn}/themes/pierre-light.js`),
-    import(`${cdn}/themes/pierre-dark.js`),
+    import(`${cdn}/themes/pierre-light.min.js`),
+    import(`${cdn}/themes/pierre-dark.min.js`),
   ]);
   const decoder = new TextDecoder();
   for (const code of document.querySelectorAll('pre > code[class*="language-"]')) {
