@@ -46,7 +46,10 @@ for (const [name, secret, replacement] of cases) {
 }
 
 test("redacts quoted JSON assignments without consuming punctuation", () => {
-	assert.equal(redactText(`{"token": "${"a".repeat(24)}", "enabled": true}`), `{"token": [REDACTED], "enabled": true}`);
+	assert.equal(
+		redactText(`{"token": "${"a".repeat(24)}", "enabled": true}`),
+		`{"token": [REDACTED], "enabled": true}`,
+	);
 });
 
 test("redacts padded bearer credentials", () => {
@@ -118,7 +121,11 @@ test("hides sensitive files read with the read tool", async () => {
 
 test("still scans .env.example for secrets", async () => {
 	const { run } = setup();
-	const clean = await run({ toolName: "read", input: { path: ".env.example" }, content: [{ type: "text", text: "A=" }] });
+	const clean = await run({
+		toolName: "read",
+		input: { path: ".env.example" },
+		content: [{ type: "text", text: "A=" }],
+	});
 	assert.equal(clean, undefined);
 	const leaked = await run({
 		toolName: "read",
