@@ -45,6 +45,5 @@ ln -sf {thisDir}/skills ~/.claude/skills
 - [trancong12102/pi-skills](https://github.com/trancong12102/pi-skills)
 - [hjanuschka/shitty-extensions](https://github.com/hjanuschka/shitty-extensions)
 - [nbbaier/agent-skills](https://github.com/nbbaier/agent-skills)
-- [vojtaholik/good-css](https://github.com/vojtaholik/good-css) by Vojta Holík ([good-css.com](https://good-css.com)), vendored in `skills/good-css`
 
 [pi-coding-agent]: https://pi.dev/

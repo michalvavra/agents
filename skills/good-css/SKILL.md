@@ -1,6 +1,10 @@
 ---
 name: good-css
 description: Modern CSS techniques that replace breakpoint ladders, wrapper elements and scripts. Use whenever you write, edit or review styles in any form, including plain CSS, Tailwind classes, StyleX, CSS-in-JS and inline styles, and whenever you build or restyle a page or component, even if the user never mentions CSS.
+license: MIT
+metadata:
+  author: Vojta Holík
+  source: https://github.com/vojtaholik/good-css/tree/6d16d2fd27f4892e2aea4b5c5c2b016f45be7eef/skills/good-css
 ---
 
 # Good CSS

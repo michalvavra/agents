@@ -4,7 +4,7 @@ Paste only the ones you use into the **second** `<style>`. Each one is written b
 
 ## Timeline
 
-Dated events, newest last. Used by investigations, status updates, digests.
+Dated events, newest last. Used by data reports and rollout sections.
 
 ```html
 <ol class="timeline">
@@ -24,7 +24,7 @@ Dated events, newest last. Used by investigations, status updates, digests.
 
 ## Steps
 
-Numbered steps, each with what to do and how to check it. Used by technical plans and runbooks. Each step is an `h3` so it can be linked.
+Numbered steps, each with what to do and how to check it. Used by technical plans. Each step is an `h3` so it can be linked.
 
 ```html
 <ol class="steps">
@@ -120,42 +120,9 @@ A comparison table where cells are judgments, not numbers. The first column stay
 }
 ```
 
-## Items
-
-A dense list of links with a source line and a takeaway. Used by digests, research briefs and surveys. The title is the link; one per item.
-
-```html
-<ol class="items">
-  <li>
-    <a href="https://…">Speculative decoding without a draft model</a>
-    <p class="meta">@karpathy · X · <time datetime="2025-10-03">3 Oct</time> <span class="tag info">LLMs</span></p>
-    <p>Why it matters, in one or two sentences.</p>
-  </li>
-</ol>
-```
-
-```css
-.items {
-  list-style: none;
-  padding: 0;
-  & > li {
-    padding-block: 0.75rem;
-    border-block-start: 1px solid var(--line);
-    & + li { margin-block-start: 0; }
-    & > * { margin-block: 0; }
-    & > * + * { margin-block-start: 0.2rem; }
-    & > a:first-child { font-weight: 600; text-decoration: none; }
-  }
-  & .meta { color: var(--muted); font-size: var(--step--1); }
-}
-@media (hover: hover) and (pointer: fine) {
-  .items > li > a:first-child:hover { text-decoration: underline; }
-}
-```
-
 ## Checklist
 
-Status of a list of tasks or review criteria. The state is a word in a tag, so it reads without color.
+Status of a list of tasks or review criteria. Used by code reviews and technical plans. The state is a word in a tag, so it reads without color.
 
 ```html
 <ul class="checklist">

@@ -1,7 +1,7 @@
 # Data report
 
 **Use for:** metrics reviews, analyses, A/B results, experiment or benchmark results, anything where the point is a number.
-**Not for:** a choice between options (`decision-memo.md`), a root-cause hunt (`investigation.md`).
+**Not for:** a system design (`architecture.md`) or a plan for code (`technical-plan.md`).
 
 ## Skeleton
 

@@ -1,6 +1,6 @@
 ---
 name: html-artifacts
-description: Build self-contained single-file HTML artifacts (reports, code reviews, technical and architecture plans, digests, paper summaries, research briefs, runbooks and other docs) with a shared, quiet, typographic style. Use when asked for an HTML artifact, report page, shareable page, or Radius/trove-style output.
+description: Build self-contained single-file HTML artifacts (data reports, code reviews, technical plans, architecture plans and other docs) with a shared, quiet, typographic style. Use when asked for an HTML artifact, report page, shareable page, or Radius/trove-style output.
 ---
 
 # HTML Artifacts
@@ -11,7 +11,7 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 
 - `references/artifact.css`: the kit. Paste it **verbatim** into a `<style>` tag. Don't link to it.
 - `references/example.html`: a sample page that uses every kit class.
-- `references/components.md`: optional components (timeline, steps, diff, matrix, digest item, diagram) to paste into the second `<style>`.
+- `references/components.md`: optional components (timeline, steps, diff, matrix, checklist, diagram) to paste into the second `<style>`.
 - `references/genres/*.md`: what to write for each kind of artifact. **Read the one that matches before you write.**
 
 ## Workflow
@@ -52,19 +52,8 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 | `genres/code-review.md` | a review of a diff, PR or module |
 | `genres/technical-plan.md` | a plan for writing code: what to change, in what order, how to verify |
 | `genres/architecture.md` | a system design, RFC or ADR: options, decision, consequences |
-| `genres/digest.md` | a roundup of tweets, posts, blogs, news or releases, mostly links |
-| `genres/paper-summary.md` | one paper (arXiv etc.) explained and judged |
-| `genres/survey.md` | many papers, tools or libraries compared under a taxonomy |
-| `genres/research-brief.md` | an answer to a question built from web or doc sources |
-| `genres/decision-memo.md` | a recommendation between a few options, technical or not |
-| `genres/investigation.md` | a debugging session or root-cause hunt |
-| `genres/codebase-tour.md` | an onboarding map of a repo or subsystem |
-| `genres/runbook.md` | a how-to or operational procedure someone will follow step by step |
-| `genres/explainer.md` | teaching a concept, a tutorial |
-| `genres/meeting-notes.md` | a summary of a meeting, call or transcript |
-| `genres/status-update.md` | a weekly or project status report |
 
-If none fits, use the closest one and keep the [writing rules](#writing). If two fit, the one that matches what the reader must *do* next wins.
+If none fits, use the general [writing rules](#writing) below: answer first, then evidence, then method. If two fit, pick the one that matches what the reader must *do* next.
 
 ## Writing
 
@@ -128,7 +117,7 @@ The kit follows the OS setting through `color-scheme: light dark`. Every role to
 
 The kit is inside `@layer artifact`, so **any unlayered CSS you add wins automatically**. You never need `!important` or selector tricks.
 
-**Write all new CSS by the `good-css` skill** (Vojta Holík, <https://good-css.com>). Read its `SKILL.md` and follow the "In all CSS" rules; read its reference files only for what you are building (e.g. `layout.md` for a new grid, `text-and-media.md` for long titles or thumbnails in a digest). In short: logical properties, OKLCH with `none` hue for grays, `:hover` only inside `@media (hover: hover) and (pointer: fine)`, an `:active` state on anything pressable, motion only inside `prefers-reduced-motion: no-preference`, `overflow: clip` over `hidden`, and `min(…, 100%)` inside grid `minmax()`.
+**Write all new CSS by the `good-css` skill** (Vojta Holík, <https://good-css.com>). Read its `SKILL.md` and follow the "In all CSS" rules; read its reference files only for what you are building (e.g. `layout.md` for a new grid, `text-and-media.md` for long titles or images). In short: logical properties, OKLCH with `none` hue for grays, `:hover` only inside `@media (hover: hover) and (pointer: fine)`, an `:active` state on anything pressable, motion only inside `prefers-reduced-motion: no-preference`, `overflow: clip` over `hidden`, and `min(…, 100%)` inside grid `minmax()`.
 
 Kit-specific rules on top of that:
 
