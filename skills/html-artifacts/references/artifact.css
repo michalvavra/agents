@@ -1,10 +1,21 @@
-/* Artifact kit. Paste verbatim into <style>. Extend in a second, unlayered <style>. */
+/* Artifact kit. Paste verbatim into <style>. Extend in a second, unlayered <style>.
+   Follows the good-css skill (https://good-css.com, by Vojta Holík). Deliberate deviations are listed in SKILL.md. */
+
+/* Registered outside the layer: fade the edges of .scroll only when it overflows */
+@property --fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@keyframes scroll-edges {
+  from { --fade-start: 0px; --fade-end: 1.5rem; }
+  10%, 90% { --fade-start: 1.5rem; --fade-end: 1.5rem; }
+  to { --fade-start: 1.5rem; --fade-end: 0px; }
+}
+
 @layer artifact {
   :root {
     /* Follows the OS. Force one with :root { color-scheme: light } or dark. */
     color-scheme: light dark;
 
-    /* Palette: clrs.cc in OKLCH */
+    /* Palette: clrs.cc in OKLCH. Grays use hue `none` so mixes don't drift to red. */
     --navy: oklch(23.8% 0.071 252);
     --blue: oklch(56.2% 0.177 253.7);
     --aqua: oklch(84.7% 0.101 225.4);
@@ -18,10 +29,10 @@
     --maroon: oklch(41.1% 0.152 357.6);
     --fuchsia: oklch(64.7% 0.274 341);
     --purple: oklch(55.2% 0.258 321.5);
-    --black: oklch(17.8% 0 0);
-    --gray: oklch(73.8% 0 0);
-    --silver: oklch(89.8% 0 0);
-    --white: oklch(100% 0 0);
+    --black: oklch(17.8% 0 none);
+    --gray: oklch(73.8% 0 none);
+    --silver: oklch(89.8% 0 none);
+    --white: oklch(100% 0 none);
 
     /* Roles: light-dark(light, dark), neutrals tinted with the navy hue */
     --ink: light-dark(oklch(22% 0.015 252), oklch(92% 0.01 252));
@@ -31,10 +42,11 @@
     --surface: light-dark(oklch(97.5% 0.004 252), oklch(21% 0.015 252));
     --paper: light-dark(var(--white), oklch(16% 0.015 252));
     --link: light-dark(oklch(from var(--blue) 0.48 c h), oklch(from var(--blue) 0.76 calc(c * 0.8) h));
+    --link-active: color-mix(in oklch, var(--link), var(--ink) 35%);
     --highlight: light-dark(oklch(from var(--yellow) 0.97 calc(c * 0.3) h), oklch(from var(--yellow) 0.3 calc(c * 0.3) h));
     --tone: var(--gray);
 
-    /* Type */
+    /* Type: fluid steps are rem + vw, max ≤ 2.5 × min */
     --serif: "Plantin MT Pro", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --mono: "Commit Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -49,48 +61,75 @@
     --measure: 68ch;
     --page: 52rem;
     --wide: 72rem;
+    --gutter: 1rem;
+    --space-page: clamp(2rem, 1.3rem + 3.5vw, 4rem); /* 2rem at 320px → 4rem at 1240px */
     --flow: 1rem;
     --radius: 3px;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  *, ::before, ::after { box-sizing: border-box; }
+  /* Reset (good-css "The reset", minus what artifacts don't need) */
+  *, ::before, ::after { box-sizing: border-box; min-width: 0; }
 
   html {
     font: var(--step-0) / 1.6 var(--font);
     color: var(--ink);
     background: var(--paper);
-    text-size-adjust: none;
-    -webkit-text-size-adjust: none;
+    interpolate-size: allow-keywords;
+    scrollbar-gutter: stable;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
     font-kerning: normal;
     font-variant-ligatures: common-ligatures contextual;
-    text-rendering: optimizeLegibility;
     hanging-punctuation: first allow-end last;
-    scrollbar-gutter: stable;
     accent-color: var(--link);
   }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
 
-  body { margin: 0; }
+  body { margin: 0; min-block-size: 100svh; }
 
+  /* Page: content grid with a wide breakout. Direct children sit in `content`; `.wide` in `wide`. */
   main {
-    width: min(100% - 2rem, var(--page));
-    margin-inline: auto;
-    padding-block: clamp(2rem, 6vw, 4rem);
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(var(--gutter), 1fr)
+      [wide-start] minmax(0, calc((var(--wide) - var(--page)) / 2))
+      [content-start] min(100% - var(--gutter) * 2, var(--page)) [content-end]
+      minmax(0, calc((var(--wide) - var(--page)) / 2)) [wide-end]
+      minmax(var(--gutter), 1fr) [full-end];
+    align-content: start;
+    padding-block: var(--space-page);
+    & > * { grid-column: content; margin-block: 0; }
+    & > .wide { grid-column: wide; }
+    /* The parent owns the space between its children */
+    & > * + * { margin-block-start: var(--flow-space, var(--flow)); }
+    & > :is(h2, h3, h4) { --flow-space: 2em; }
+    & > :is(h2, h3, h4) + * { --flow-space: 0.6em; }
+    & > hr, & > hr + * { --flow-space: 2.5rem; }
   }
 
   /* Headings: bold h1, regular-weight h2–h3, size does the work */
-  :is(h1, h2, h3, h4) {
+  :where(h1, h2, h3, h4) {
     font-weight: 400;
     line-height: 1.2;
     text-wrap: balance;
     margin-block: 2em 0.5em;
     &:first-child { margin-block-start: 0; }
   }
-  h1 { font-size: var(--step-3); font-weight: 700; line-height: 1.1; letter-spacing: -0.015em; margin-block-start: 0; }
+  h1 { font-size: var(--step-3); font-weight: 700; line-height: 1.1; letter-spacing: -0.015em; }
   h2 { font-size: var(--step-2); }
   h3 { font-size: var(--step-1); }
   h4 { font-size: var(--step-0); font-weight: 600; }
 
-  /* Heading anchors: <h2 id="x"><a href="#x">Text</a></h2>. Looks like plain text, "#" on hover */
+  /* Heading anchors: <h2 id="x"><a href="#x">Text</a></h2>. Looks like plain text, "#" on hover/focus */
   :is(h2, h3, h4)[id] > a[href^="#"] {
     color: inherit;
     text-decoration: none;
@@ -100,17 +139,21 @@
       color: var(--muted);
       font-weight: 400;
       opacity: 0;
-      transition: opacity 0.15s;
+      transition: opacity 150ms var(--ease-out);
     }
-    &:is(:hover, :focus-visible)::after { opacity: 1; }
+    &:focus-visible::after { opacity: 1; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    :is(h2, h3, h4)[id] > a[href^="#"]:hover::after { opacity: 1; }
   }
   :is(h1, h2, h3, h4)[id] { scroll-margin-block-start: 2rem; }
 
-  /* Flow */
-  :is(p, ul, ol, dl, blockquote, pre, table, figure, details, .note, .grid, .stats) {
+  /* Flow inside nested containers (notes, cells, grid columns): bottom margins, last one trimmed */
+  :where(p, ul, ol, dl, blockquote, pre, table, figure, details, .note, .grid, .stats) {
     margin-block: 0 var(--flow);
   }
-  :is(p, li, dd, blockquote, figcaption) { max-inline-size: var(--measure); text-wrap: pretty; }
+  :where(.note, details, li, dd, td, blockquote, .grid > *) > :last-child { margin-block-end: 0; }
+  :is(p, li, dd, blockquote, figcaption) { max-inline-size: var(--measure); }
   :is(ul, ol) { padding-inline-start: 1.25em; }
   li + li { margin-block-start: 0.25em; }
   li::marker { color: var(--muted); }
@@ -119,9 +162,12 @@
     color: var(--link);
     text-decoration-thickness: from-font;
     text-underline-offset: 0.15em;
-    &:hover { text-decoration-thickness: 0.1em; }
+    &:active { color: var(--link-active); }
   }
-  :focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { text-decoration-thickness: 0.1em; }
+  }
+  :focus-visible { outline: max(2px, 0.08em) solid var(--link); outline-offset: 2px; }
 
   :is(b, strong) { font-weight: 600; }
   :is(small, .small) { font-size: var(--step--1); }
@@ -133,7 +179,7 @@
     color: var(--muted);
     font-style: italic;
   }
-  :is(img, svg, video, canvas) { max-inline-size: 100%; block-size: auto; }
+  :is(img, svg, video, canvas) { display: block; max-inline-size: 100%; block-size: auto; }
   figure { margin-inline: 0; }
   figcaption { margin-block-start: 0.4em; color: var(--muted); font-size: var(--step--1); }
 
@@ -143,6 +189,7 @@
   pre {
     padding: 0.75rem 1rem;
     overflow-x: auto;
+    overflow-wrap: normal;
     line-height: 1.55;
     tab-size: 2;
     background: var(--surface);
@@ -168,7 +215,7 @@
   }
   th { font-weight: 600; }
   /* Row hover on pointer devices; edge shadows extend the fill past the flush first/last cells */
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     tbody tr:hover > :is(td, th) {
       background: var(--surface);
       &:first-child { box-shadow: -0.6em 0 0 var(--surface); }
@@ -179,9 +226,18 @@
   thead th { vertical-align: bottom; border-color: var(--border); }
   caption { caption-side: bottom; padding-block-start: 0.5em; text-align: start; color: var(--muted); }
 
+  /* Disclosure: native <details>, height animates where interpolate-size exists */
   details {
     & > summary { cursor: pointer; color: var(--link); }
+    & > summary:active { color: var(--link-active); }
     &[open] > summary { margin-block-end: 0.5em; }
+    &::details-content { block-size: 0; overflow: clip; }
+    &[open]::details-content { block-size: auto; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    details::details-content {
+      transition: block-size 250ms var(--ease-out), content-visibility 250ms allow-discrete;
+    }
   }
 
   /* Footnotes (Hugo/Goldmark markup): sup > a.footnote-ref, .footnotes > ol > li#fn:N */
@@ -195,7 +251,7 @@
     &::after { content: "]"; }
   }
   .footnotes {
-    margin-block-start: 3rem;
+    --flow-space: 3rem;
     color: var(--muted);
     font-size: var(--step--1);
     & hr { margin-block: 0 1rem; }
@@ -212,8 +268,19 @@
   .mono { font-family: var(--mono); font-size: 0.85em; }
   .num { text-align: end; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
   .nowrap { white-space: nowrap; }
-  .scroll { overflow-x: auto; }
-  .wide { inline-size: min(100vw - 2rem, var(--wide)); margin-inline-start: 50%; translate: -50% 0; }
+  /* Horizontal scroller; edges fade only on the side that still has content (Chrome, Safari 26) */
+  .scroll {
+    overflow-x: auto;
+    animation: scroll-edges linear;
+    animation-timeline: scroll(self inline);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fade-start),
+      #000 calc(100% - var(--fade-end)),
+      transparent
+    );
+  }
   .grid {
     display: grid;
     gap: var(--gap, 1.5rem);
@@ -260,19 +327,19 @@
     &::before {
       content: "";
       position: absolute;
-      inset: -1px auto auto -1px;
+      inset-block-start: -1px;
+      inset-inline-start: -1px;
       inline-size: 0.9rem;
       aspect-ratio: 1;
       background: var(--tone);
       clip-path: polygon(0 0, 100% 0, 0 100%);
     }
-    & > :last-child { margin-block-end: 0; }
   }
 
   .stats {
     display: grid;
     gap: 1rem 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
     padding-block: 1rem;
     border-block: 1px solid var(--line);
   }
@@ -310,8 +377,9 @@
 
   @media print {
     :root { color-scheme: light; }
-    main { inline-size: auto; padding: 0; }
+    main { display: block; padding: 0; }
     pre { white-space: pre-wrap; }
+    .scroll { mask-image: none; }
     :is(.note, .stats, pre, tr) { break-inside: avoid; }
   }
 }
