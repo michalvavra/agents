@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout latency: March review</title>
+<!-- Real artifacts: replace this <link> with <style> + the full contents of artifact.css. -->
+<link rel="stylesheet" href="artifact.css">
+<style>
+  /* Artifact-specific additions: unlayered, so they always win over the kit. */
+  .tone-purple { --tone: var(--purple); }
+  .timeline {
+    list-style: none;
+    padding: 0;
+    & li { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; }
+    & time { color: var(--muted); font-variant-numeric: tabular-nums; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Checkout latency: March review</h1>
+  <p class="lead">Median checkout time fell by a third after we moved the tax lookup out of the request path.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> The long tail is still there.</p>
+  <p class="muted small">Data: <code>checkout_events</code>, 1–31 March. Prepared by Pi.</p>
+
+  <div class="stats">
+    <div class="stat"><b>412 ms</b><span>median, was 618 ms</span></div>
+    <div class="stat ok"><b>−33%</b><span>change in p50</span></div>
+    <div class="stat bad"><b>4.8 s</b><span>p99, unchanged</span></div>
+    <div class="stat"><b>1.2M</b><span>checkouts</span></div>
+  </div>
+
+  <div class="note info">
+    <p><b>Summary.</b> The fix worked for typical requests. The p99 is dominated by the payment provider, which we don't control.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> See <a href="#next">next steps</a>.</p>
+  </div>
+
+  <h2 id="by-region"><a href="#by-region">By region</a></h2>
+  <p>Every region improved except APAC, which still calls the old tax service directly.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+  <div class="scroll">
+  <table>
+    <thead>
+      <tr><th>Region</th><th class="num">Checkouts</th><th class="num">p50</th><th>Share under 500 ms</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Europe</td><td class="num">512,300</td><td class="num">380 ms</td><td><span class="bar ok" style="--value: 81%"></span></td><td><span class="tag ok">fixed</span></td></tr>
+      <tr><td>North America</td><td class="num">441,020</td><td class="num">402 ms</td><td><span class="bar ok" style="--value: 74%"></span></td><td><span class="tag ok">fixed</span></td></tr>
+      <tr><td>APAC</td><td class="num">198,440</td><td class="num">611 ms</td><td><span class="bar warn" style="--value: 38%"></span></td><td><span class="tag warn">pending</span></td></tr>
+      <tr><td>Other</td><td class="num">48,210</td><td class="num">455 ms</td><td><span class="bar" style="--value: 60%"></span></td><td><span class="tag">n/a</span></td></tr>
+    </tbody>
+    <caption>p50 is the median checkout duration, measured server-side.</caption>
+  </table>
+  </div>
+
+  <h2 id="how-we-measured"><a href="#how-we-measured">How we measured</a></h2>
+  <div class="grid">
+    <div>
+      <h3 id="source"><a href="#source">Source</a></h3>
+      <dl class="kv">
+        <dt>Table</dt><dd><code>analytics.checkout_events</code></dd>
+        <dt>Window</dt><dd>1–31 March, UTC</dd>
+        <dt>Excluded</dt><dd>Test accounts, retries</dd>
+      </dl>
+    </div>
+    <div>
+      <h3 id="timeline"><a href="#timeline">Timeline</a></h3>
+      <ol class="timeline">
+        <li><time>3 Mar</time><span>Tax lookup moved to a queue</span></li>
+        <li><time>10 Mar</time><span>Rolled out to Europe, NA</span></li>
+        <li><time>—</time><span>APAC <span class="tag tone-purple">blocked</span></span></li>
+      </ol>
+    </div>
+  </div>
+
+  <figure class="code">
+    <figcaption>latency.sql</figcaption>
+    <pre><code class="language-sql">-- p50 per region
+SELECT region,
+       count(*) AS checkouts,
+       percentile_cont(0.5) WITHIN GROUP (ORDER BY duration_ms) AS p50
+FROM analytics.checkout_events
+WHERE created_at >= '2025-03-01'
+GROUP BY region;</code></pre>
+  </figure>
+
+  <details>
+    <summary>Raw p99 values per day</summary>
+    <pre><code class="language-json">{ "2025-03-01": 4812, "2025-03-02": 4790, "2025-03-03": 4904 }</code></pre>
+    <script type="application/json" id="p99-daily">{ "2025-03-01": 4812, "2025-03-02": 4790, "2025-03-03": 4904 }</script>
+  </details>
+
+  <h2 id="next"><a href="#next">Next steps</a></h2>
+  <ol>
+    <li>Move APAC to the queued tax lookup.</li>
+    <li>Add a timeout and fallback for the payment provider.</li>
+    <li>Re-run this report in April.</li>
+  </ol>
+
+  <blockquote>“Fast for most people” is not the same as fast.</blockquote>
+
+  <div class="note warn"><p>APAC numbers include a 2-day incident on 14–15 March.</p></div>
+
+  <div class="footnotes" role="doc-endnotes">
+    <hr>
+    <ol>
+      <li id="fn:1"><p>Server-side duration from <code>checkout_events</code>, 1–31 March, compared with February. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">↩︎</a></p></li>
+      <li id="fn:2"><p>Provider SLA allows up to 5 s. See the <a href="https://example.com/sla">payment provider status page</a>. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">↩︎</a></p></li>
+      <li id="fn:3"><p>Tracked in <a href="https://example.com/issues/APAC-212">APAC-212</a>. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">↩︎</a></p></li>
+    </ol>
+  </div>
+</main>
+
+<script type="module">
+  // Syntax highlighting with @pierre/highlights (unpinned = latest).
+  const cdn = "https://cdn.jsdelivr.net/npm/@pierre/highlights/dist";
+  const { codeToHtml, isSupportedLanguage } = await import(`${cdn}/browser.js`);
+  const [{ default: light }, { default: dark }] = await Promise.all([
+    import(`${cdn}/themes/pierre-light.js`),
+    import(`${cdn}/themes/pierre-dark.js`),
+  ]);
+  const decoder = new TextDecoder();
+  for (const code of document.querySelectorAll('pre > code[class*="language-"]')) {
+    const lang = code.className.match(/language-(\S+)/)[1];
+    if (!isSupportedLanguage(lang)) continue;
+    const html = decoder.decode(codeToHtml(code.textContent, { lang, themes: { light, dark }, defaultColor: "light-dark()" }));
+    const tpl = document.createElement("template");
+    tpl.innerHTML = html;
+    code.innerHTML = tpl.content.querySelector("code").innerHTML;
+  }
+</script>
+</body>
+</html>

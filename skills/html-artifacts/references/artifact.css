@@ -1,0 +1,317 @@
+/* Artifact kit. Paste verbatim into <style>. Extend in a second, unlayered <style>. */
+@layer artifact {
+  :root {
+    /* Follows the OS. Force one with :root { color-scheme: light } or dark. */
+    color-scheme: light dark;
+
+    /* Palette: clrs.cc in OKLCH */
+    --navy: oklch(23.8% 0.071 252);
+    --blue: oklch(56.2% 0.177 253.7);
+    --aqua: oklch(84.7% 0.101 225.4);
+    --teal: oklch(77.1% 0.119 195);
+    --olive: oklch(61.6% 0.108 161.3);
+    --green: oklch(74% 0.22 144.3);
+    --lime: oklch(87.3% 0.247 148.8);
+    --yellow: oklch(89.7% 0.185 97.4);
+    --orange: oklch(74% 0.179 53.5);
+    --red: oklch(66% 0.227 28.4);
+    --maroon: oklch(41.1% 0.152 357.6);
+    --fuchsia: oklch(64.7% 0.274 341);
+    --purple: oklch(55.2% 0.258 321.5);
+    --black: oklch(17.8% 0 0);
+    --gray: oklch(73.8% 0 0);
+    --silver: oklch(89.8% 0 0);
+    --white: oklch(100% 0 0);
+
+    /* Roles: light-dark(light, dark), neutrals tinted with the navy hue */
+    --ink: light-dark(oklch(22% 0.015 252), oklch(92% 0.01 252));
+    --muted: light-dark(oklch(50% 0.015 252), oklch(72% 0.015 252));
+    --line: light-dark(oklch(92% 0.006 252), oklch(30% 0.015 252));
+    --border: light-dark(oklch(84% 0.01 252), oklch(40% 0.015 252));
+    --surface: light-dark(oklch(97.5% 0.004 252), oklch(21% 0.015 252));
+    --paper: light-dark(var(--white), oklch(16% 0.015 252));
+    --link: light-dark(oklch(from var(--blue) 0.48 c h), oklch(from var(--blue) 0.76 calc(c * 0.8) h));
+    --highlight: light-dark(oklch(from var(--yellow) 0.97 calc(c * 0.3) h), oklch(from var(--yellow) 0.3 calc(c * 0.3) h));
+    --tone: var(--gray);
+
+    /* Type */
+    --serif: "Plantin MT Pro", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "Commit Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --font: var(--serif);
+    --step--1: 0.875rem;
+    --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --step-1: clamp(1.125rem, 1.05rem + 0.4vw, 1.3rem);
+    --step-2: clamp(1.35rem, 1.2rem + 0.75vw, 1.6rem);
+    --step-3: clamp(1.75rem, 1.45rem + 1.5vw, 2.25rem);
+
+    /* Layout */
+    --measure: 68ch;
+    --page: 52rem;
+    --wide: 72rem;
+    --flow: 1rem;
+    --radius: 3px;
+  }
+
+  *, ::before, ::after { box-sizing: border-box; }
+
+  html {
+    font: var(--step-0) / 1.6 var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    text-rendering: optimizeLegibility;
+    hanging-punctuation: first allow-end last;
+    scrollbar-gutter: stable;
+    accent-color: var(--link);
+  }
+
+  body { margin: 0; }
+
+  main {
+    width: min(100% - 2rem, var(--page));
+    margin-inline: auto;
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+
+  /* Headings: bold h1, regular-weight h2–h3, size does the work */
+  :is(h1, h2, h3, h4) {
+    font-weight: 400;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin-block: 2em 0.5em;
+    &:first-child { margin-block-start: 0; }
+  }
+  h1 { font-size: var(--step-3); font-weight: 700; line-height: 1.1; letter-spacing: -0.015em; margin-block-start: 0; }
+  h2 { font-size: var(--step-2); }
+  h3 { font-size: var(--step-1); }
+  h4 { font-size: var(--step-0); font-weight: 600; }
+
+  /* Heading anchors: <h2 id="x"><a href="#x">Text</a></h2>. Looks like plain text, "#" on hover */
+  :is(h2, h3, h4)[id] > a[href^="#"] {
+    color: inherit;
+    text-decoration: none;
+    &::after {
+      content: "#" / "";
+      margin-inline-start: 0.3em;
+      color: var(--muted);
+      font-weight: 400;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    &:is(:hover, :focus-visible)::after { opacity: 1; }
+  }
+  :is(h1, h2, h3, h4)[id] { scroll-margin-block-start: 2rem; }
+
+  /* Flow */
+  :is(p, ul, ol, dl, blockquote, pre, table, figure, details, .note, .grid, .stats) {
+    margin-block: 0 var(--flow);
+  }
+  :is(p, li, dd, blockquote, figcaption) { max-inline-size: var(--measure); text-wrap: pretty; }
+  :is(ul, ol) { padding-inline-start: 1.25em; }
+  li + li { margin-block-start: 0.25em; }
+  li::marker { color: var(--muted); }
+
+  a {
+    color: var(--link);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.15em;
+    &:hover { text-decoration-thickness: 0.1em; }
+  }
+  :focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+
+  :is(b, strong) { font-weight: 600; }
+  :is(small, .small) { font-size: var(--step--1); }
+  hr { border: 0; border-block-start: 1px solid var(--line); margin-block: 2.5rem; }
+  blockquote {
+    margin-inline: 0;
+    padding-inline-start: 1em;
+    border-inline-start: 2px solid var(--border);
+    color: var(--muted);
+    font-style: italic;
+  }
+  :is(img, svg, video, canvas) { max-inline-size: 100%; block-size: auto; }
+  figure { margin-inline: 0; }
+  figcaption { margin-block-start: 0.4em; color: var(--muted); font-size: var(--step--1); }
+
+  /* Code */
+  :is(code, kbd, samp, pre) { font-family: var(--mono); font-size: 0.85em; font-variant-ligatures: none; }
+  :not(pre) > code { padding: 0.1em 0.3em; background: var(--surface); border-radius: var(--radius); }
+  pre {
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    line-height: 1.55;
+    tab-size: 2;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    & code { font-size: 1em; }
+  }
+
+  /* Tables */
+  table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--step--1);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  :is(th, td) {
+    padding: 0.45em 0.6em;
+    text-align: start;
+    vertical-align: top;
+    border-block-end: 1px solid var(--line);
+    &:first-child { padding-inline-start: 0; }
+    &:last-child { padding-inline-end: 0; }
+  }
+  th { font-weight: 600; }
+  /* Row hover on pointer devices; edge shadows extend the fill past the flush first/last cells */
+  @media (hover: hover) {
+    tbody tr:hover > :is(td, th) {
+      background: var(--surface);
+      &:first-child { box-shadow: -0.6em 0 0 var(--surface); }
+      &:last-child { box-shadow: 0.6em 0 0 var(--surface); }
+      &:only-child { box-shadow: -0.6em 0 0 var(--surface), 0.6em 0 0 var(--surface); }
+    }
+  }
+  thead th { vertical-align: bottom; border-color: var(--border); }
+  caption { caption-side: bottom; padding-block-start: 0.5em; text-align: start; color: var(--muted); }
+
+  details {
+    & > summary { cursor: pointer; color: var(--link); }
+    &[open] > summary { margin-block-end: 0.5em; }
+  }
+
+  /* Footnotes (Hugo/Goldmark markup): sup > a.footnote-ref, .footnotes > ol > li#fn:N */
+  :target { scroll-margin-block-start: 2rem; }
+  sup:has(> .footnote-ref) { line-height: 0; }
+  .footnote-ref {
+    margin-inline-start: 0.1em;
+    font: 0.75em var(--mono);
+    text-decoration: none;
+    &::before { content: "["; }
+    &::after { content: "]"; }
+  }
+  .footnotes {
+    margin-block-start: 3rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+    & hr { margin-block: 0 1rem; }
+    & ol { padding-inline-start: 1.5em; }
+    & li::marker { font-family: var(--mono); }
+    & li p { margin: 0; }
+    & li:target { color: var(--ink); background: var(--highlight); }
+  }
+  .footnote-backref { margin-inline-start: 0.25em; text-decoration: none; }
+
+  /* Utilities */
+  .lead { font-size: var(--step-1); line-height: 1.5; }
+  .muted { color: var(--muted); }
+  .mono { font-family: var(--mono); font-size: 0.85em; }
+  .num { text-align: end; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+  .nowrap { white-space: nowrap; }
+  .scroll { overflow-x: auto; }
+  .wide { inline-size: min(100vw - 2rem, var(--wide)); margin-inline-start: 50%; translate: -50% 0; }
+  .grid {
+    display: grid;
+    gap: var(--gap, 1.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--min, 14rem), 100%), 1fr));
+    & > * { margin: 0; }
+  }
+
+  /* Tones: set --tone, components derive readable colors from it */
+  :where(.bar) { --tone: var(--blue); }
+  .ok { --tone: var(--green); }
+  .warn { --tone: var(--orange); }
+  .bad { --tone: var(--red); }
+  .info { --tone: var(--blue); }
+  /* Derived per element from its own --tone, for both schemes */
+  :is(.ok, .warn, .bad, .info, .tag, .note) {
+    --tone-ink: light-dark(oklch(from var(--tone) min(l, 0.48) c h), oklch(from var(--tone) max(l, 0.8) c h));
+    --tone-bg: light-dark(oklch(from var(--tone) 0.975 calc(c * 0.15) h), oklch(from var(--tone) 0.24 calc(c * 0.25) h));
+    --tone-edge: light-dark(oklch(from var(--tone) 0.85 calc(c * 0.4) h), oklch(from var(--tone) 0.4 calc(c * 0.4) h));
+    --tone-shadow: light-dark(oklch(from var(--tone) 0.92 calc(c * 0.3) h), oklch(from var(--tone) 0.3 calc(c * 0.3) h));
+  }
+  :is(.ok, .warn, .bad, .info) { color: var(--tone-ink); }
+
+  /* Components */
+  .tag {
+    display: inline-block;
+    padding: 0 0.4em;
+    font: 0.75em / 1.5 var(--mono);
+    white-space: nowrap;
+    vertical-align: 0.1em;
+    color: var(--tone-ink);
+    background: var(--tone-bg);
+    border: 1px solid var(--tone-edge);
+    border-radius: var(--radius);
+  }
+
+  /* Paper card: tone corner, hard offset shadow */
+  .note {
+    position: relative;
+    padding: 0.85rem 1.1rem;
+    color: var(--ink);
+    background: var(--tone-bg);
+    border: 1px solid var(--tone-edge);
+    box-shadow: 0.3rem 0.3rem 0 var(--tone-shadow);
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -1px auto auto -1px;
+      inline-size: 0.9rem;
+      aspect-ratio: 1;
+      background: var(--tone);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    & > :last-child { margin-block-end: 0; }
+  }
+
+  .stats {
+    display: grid;
+    gap: 1rem 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    padding-block: 1rem;
+    border-block: 1px solid var(--line);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    & > :first-child { font-size: var(--step-3); line-height: 1.1; font-weight: 400; font-variant-numeric: lining-nums tabular-nums; }
+    & > :not(:first-child) { color: var(--muted); font-size: var(--step--1); }
+  }
+
+  .bar {
+    display: block;
+    min-inline-size: 4rem;
+    block-size: 0.5em;
+    margin-block: calc((1lh - 0.5em) / 2);
+    background: linear-gradient(to right, var(--tone) var(--value, 0%), var(--line) 0);
+    border-radius: var(--radius);
+  }
+
+  .kv {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1.5rem;
+    & dt { color: var(--muted); }
+    & dd { margin: 0; }
+  }
+
+  .code {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    & figcaption { max-inline-size: none; margin: 0; padding: 0.4rem 1rem; border-block-end: 1px solid var(--line); font-family: var(--mono); }
+    & pre { margin: 0; border: 0; background: none; }
+  }
+
+  @media print {
+    :root { color-scheme: light; }
+    main { inline-size: auto; padding: 0; }
+    pre { white-space: pre-wrap; }
+    :is(.note, .stats, pre, tr) { break-inside: avoid; }
+  }
+}
