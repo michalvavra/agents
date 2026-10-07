@@ -33,6 +33,6 @@
     "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
-    "oxfmt": "^0.72.0"
+    "oxfmt": "0.72.0"
   }
 }
