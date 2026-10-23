@@ -56,7 +56,11 @@ const extractLastAssistantText = (messages: Array<{ role?: string; content?: unk
 		}
 
 		if (Array.isArray(content)) {
-			const text = content.filter(isTextPart).map((part) => part.text).join("\n").trim();
+			const text = content
+				.filter(isTextPart)
+				.map((part) => part.text)
+				.join("\n")
+				.trim();
 			return text || null;
 		}
 
