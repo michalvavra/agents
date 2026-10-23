@@ -1,4 +1,4 @@
-# Agent Configuration
+# agents
 
 Configuration for AI coding agents.
 
