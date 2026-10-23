@@ -46,5 +46,6 @@ ln -sf {thisDir}/skills ~/.claude/skills
 - [hjanuschka/shitty-extensions](https://github.com/hjanuschka/shitty-extensions)
 - [nbbaier/agent-skills](https://github.com/nbbaier/agent-skills)
 - [dmmulroy/.dotfiles](https://github.com/dmmulroy/.dotfiles)
+- [mattpocock/skills](https://github.com/mattpocock/skills)
 
 [pi-coding-agent]: https://pi.dev/
