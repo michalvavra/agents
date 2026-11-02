@@ -20,7 +20,6 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { StringEnum } from "@earendil-works/pi-ai";
 import {
 	copyToClipboard,
 	DEFAULT_MAX_BYTES,
@@ -31,7 +30,21 @@ import {
 	type ExtensionCommandContext,
 	type ExtensionUIContext,
 } from "@earendil-works/pi-coding-agent";
-import { Type, type Static } from "typebox";
+import {
+	type Annotations,
+	arr,
+	map,
+	num,
+	obj,
+	oneOf,
+	opt,
+	type Schema,
+	type Static,
+	str,
+	union,
+	unknown,
+} from "@earendil-works/pi-schema";
+import type { JsonValue } from "@earendil-works/pi-ai";
 
 const STATUS_KEY = "google-workspace";
 
@@ -122,28 +135,31 @@ type ExtensionState = { loginController?: AbortController; shuttingDown: boolean
 
 const API_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE"] as const;
 
-const GoogleWorkspaceParams = Type.Object({
-	url: Type.String({
+/** A string enum as `{ type: "string", enum }`, the shape providers without `anyOf`/`const` support (Google) accept. */
+function stringEnum<const V extends readonly string[]>(values: V, options?: Annotations<V[number]>): Schema<V[number]> {
+	return { type: "string", ...oneOf(values, options) };
+}
+
+const GoogleWorkspaceParams = obj({
+	url: str({
 		description:
 			'Full Google API URL on *.googleapis.com, e.g. "https://gmail.googleapis.com/gmail/v1/users/me/messages", ' +
 			'"https://www.googleapis.com/calendar/v3/calendars/primary/events", "https://www.googleapis.com/drive/v3/files", ' +
 			'"https://sheets.googleapis.com/v4/spreadsheets/{id}/values/A1:D20", "https://docs.googleapis.com/v1/documents/{id}", ' +
 			'"https://people.googleapis.com/v1/people/me/connections".',
 	}),
-	method: Type.Optional(StringEnum(API_METHODS, { description: "HTTP method (default GET)" })),
-	account: Type.Optional(
-		Type.String({ description: "Connected account email. Required when more than one account is connected." }),
-	),
-	query: Type.Optional(
-		Type.Record(Type.String(), Type.Union([Type.String(), Type.Array(Type.String())]), {
+	method: opt(stringEnum(API_METHODS, { description: "HTTP method (default GET)" })),
+	account: opt(str({ description: "Connected account email. Required when more than one account is connected." })),
+	query: opt(
+		map(union([str(), arr(str())]), {
 			description:
 				'Query parameters, e.g. {"maxResults": "10", "q": "is:unread", "fields": "messages(id)"}. ' +
 				'Arrays repeat the parameter, e.g. {"metadataHeaders": ["From", "Subject"]}.',
 		}),
 	),
-	body: Type.Optional(Type.Any({ description: "Request body. Objects are sent as JSON." })),
-	headers: Type.Optional(
-		Type.Record(Type.String(), Type.String(), {
+	body: opt(unknown({ description: "Request body. Objects are sent as JSON." })),
+	headers: opt(
+		map(str(), {
 			description: "Extra request headers. Authorization is set automatically.",
 		}),
 	),
@@ -151,12 +167,12 @@ const GoogleWorkspaceParams = Type.Object({
 
 type GoogleWorkspaceInput = Static<typeof GoogleWorkspaceParams>;
 
-const GoogleWorkspaceOutput = Type.Object({
-	account: Type.String(),
-	status: Type.Number(),
-	headers: Type.Record(Type.String(), Type.String()),
-	bodyEncoding: StringEnum(["json", "text", "base64", "empty"] as const),
-	body: Type.Any(),
+const GoogleWorkspaceOutput = obj({
+	account: str(),
+	status: num(),
+	headers: map(str()),
+	bodyEncoding: stringEnum(["json", "text", "base64", "empty"]),
+	body: unknown() as Schema<JsonValue>,
 });
 
 type ApiResult = Static<typeof GoogleWorkspaceOutput>;
@@ -217,7 +233,7 @@ export default function googleWorkspaceExtension(pi: ExtensionAPI) {
 		outputSchema: GoogleWorkspaceOutput,
 		executionMode: "parallel",
 
-		async execute(_toolCallId, params, signal) {
+		async execute(_toolCallId, params: GoogleWorkspaceInput, signal) {
 			const result = await callGoogleApi(params, signal);
 			const { text, fullOutputPath } = await formatApiResultForModel(result, params);
 			return {
@@ -280,7 +296,7 @@ async function callGoogleApi(params: GoogleWorkspaceInput, signal: AbortSignal |
 	let body: string | undefined;
 	if (params.body !== undefined && params.body !== null && method !== "GET") {
 		const isText = typeof params.body === "string";
-		body = isText ? params.body : JSON.stringify(params.body);
+		body = typeof params.body === "string" ? params.body : JSON.stringify(params.body);
 		if (!hasHeader(headers, "content-type")) {
 			headers["Content-Type"] = isText ? "text/plain" : "application/json";
 		}

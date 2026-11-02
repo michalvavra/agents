@@ -59,8 +59,7 @@ import {
 	type ExtensionContext,
 	type Theme,
 } from "@earendil-works/pi-coding-agent";
-import { StringEnum } from "@earendil-works/pi-ai";
-import { Type } from "typebox";
+import { type Annotations, arr, bool, obj, oneOf, opt, type Schema, type Static, str } from "@earendil-works/pi-schema";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -70,6 +69,7 @@ import {
 	type Focusable,
 	Input,
 	Key,
+	type KeybindingsManager,
 	Markdown,
 	SelectList,
 	Spacer,
@@ -118,21 +118,26 @@ interface TodoSettings {
 	gcDays: number;
 }
 
-type KeybindingMatcher = {
-	matches: (keyData: string, keybindingId: string) => boolean;
-};
+type KeybindingMatcher = Pick<KeybindingsManager, "matches">;
 
-const TodoParams = Type.Object({
-	action: StringEnum(["list", "list-all", "get", "create", "update", "append", "delete", "claim", "release"] as const),
-	id: Type.Optional(Type.String({ description: "Todo id (TODO-<hex> or raw hex filename)" })),
-	title: Type.Optional(Type.String({ description: "Short summary shown in lists" })),
-	status: Type.Optional(Type.String({ description: "Todo status" })),
-	tags: Type.Optional(Type.Array(Type.String({ description: "Todo tag" }))),
-	body: Type.Optional(Type.String({ description: "Long-form details (markdown). Update replaces; append adds." })),
-	force: Type.Optional(Type.Boolean({ description: "Override another session's assignment" })),
+/** A string enum as `{ type: "string", enum }`, the shape providers without `anyOf`/`const` support (Google) accept. */
+function stringEnum<const V extends readonly string[]>(values: V, options?: Annotations<V[number]>): Schema<V[number]> {
+	return { type: "string", ...oneOf(values, options) };
+}
+
+const TodoParams = obj({
+	action: stringEnum(["list", "list-all", "get", "create", "update", "append", "delete", "claim", "release"]),
+	id: opt(str({ description: "Todo id (TODO-<hex> or raw hex filename)" })),
+	title: opt(str({ description: "Short summary shown in lists" })),
+	status: opt(str({ description: "Todo status" })),
+	tags: opt(arr(str({ description: "Todo tag" }))),
+	body: opt(str({ description: "Long-form details (markdown). Update replaces; append adds." })),
+	force: opt(bool({ description: "Override another session's assignment" })),
 });
 
-type TodoAction = "list" | "list-all" | "get" | "create" | "update" | "append" | "delete" | "claim" | "release";
+type TodoInput = Static<typeof TodoParams>;
+
+type TodoAction = TodoInput["action"];
 
 type TodoOverlayAction = "back" | "work";
 
@@ -721,7 +726,8 @@ function getTodoSettingsPath(todosDir: string): string {
 
 function normalizeTodoSettings(raw: Partial<TodoSettings>): TodoSettings {
 	const gc = raw.gc ?? DEFAULT_TODO_SETTINGS.gc;
-	const gcDays = Number.isFinite(raw.gcDays) ? raw.gcDays : DEFAULT_TODO_SETTINGS.gcDays;
+	const gcDays =
+		typeof raw.gcDays === "number" && Number.isFinite(raw.gcDays) ? raw.gcDays : DEFAULT_TODO_SETTINGS.gcDays;
 	return {
 		gc: Boolean(gc),
 		gcDays: Math.max(0, Math.floor(gcDays)),
@@ -1417,7 +1423,7 @@ export default function todosExtension(pi: ExtensionAPI) {
 			"Claim tasks before working on them to avoid conflicts, and close them when complete.",
 		parameters: TodoParams,
 
-		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+		async execute(_toolCallId, params: TodoInput, _signal, _onUpdate, ctx) {
 			const todosDir = getTodosDir(ctx.cwd);
 			const action: TodoAction = params.action;
 
@@ -1682,7 +1688,8 @@ export default function todosExtension(pi: ExtensionAPI) {
 			}
 		},
 
-		renderCall(args, theme) {
+		renderCall(rawArgs, theme) {
+			const args = rawArgs as Partial<TodoInput>;
 			const action = typeof args.action === "string" ? args.action : "";
 			const id = typeof args.id === "string" ? args.id : "";
 			const normalizedId = id ? normalizeTodoId(id) : "";
@@ -1769,7 +1776,8 @@ export default function todosExtension(pi: ExtensionAPI) {
 			}
 
 			let nextPrompt: string | null = null;
-			let rootTui: TUI | null = null;
+			// Cast so TypeScript doesn't narrow to null: the callback below assigns it.
+			let rootTui = null as TUI | null;
 			await ctx.ui.custom<void>((tui, theme, keybindings, done) => {
 				rootTui = tui;
 				let selector: TodoSelectorComponent | null = null;

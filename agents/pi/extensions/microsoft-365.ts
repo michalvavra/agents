@@ -14,7 +14,6 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { StringEnum } from "@earendil-works/pi-ai";
 import {
 	copyToClipboard,
 	DEFAULT_MAX_BYTES,
@@ -25,7 +24,19 @@ import {
 	type ExtensionCommandContext,
 	type ExtensionUIContext,
 } from "@earendil-works/pi-coding-agent";
-import { Type, type Static } from "typebox";
+import {
+	type Annotations,
+	map,
+	num,
+	obj,
+	oneOf,
+	opt,
+	type Schema,
+	type Static,
+	str,
+	unknown,
+} from "@earendil-works/pi-schema";
+import type { JsonValue } from "@earendil-works/pi-ai";
 
 const STATUS_KEY = "microsoft-365";
 
@@ -106,23 +117,26 @@ type ExtensionState = { loginController?: AbortController; shuttingDown: boolean
 
 const GRAPH_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE"] as const;
 
-const MicrosoftGraphParams = Type.Object({
-	path: Type.String({
+/** A string enum as `{ type: "string", enum }`, the shape providers without `anyOf`/`const` support (Google) accept. */
+function stringEnum<const V extends readonly string[]>(values: V, options?: Annotations<V[number]>): Schema<V[number]> {
+	return { type: "string", ...oneOf(values, options) };
+}
+
+const MicrosoftGraphParams = obj({
+	path: str({
 		description:
 			'Graph path relative to https://graph.microsoft.com/v1.0, e.g. "/me/messages". Prefix "/beta/" for the beta API. An @odata.nextLink URL is accepted as-is.',
 	}),
-	method: Type.Optional(StringEnum(GRAPH_METHODS, { description: "HTTP method (default GET)" })),
-	account: Type.Optional(
-		Type.String({ description: "Connected account email. Required when more than one account is connected." }),
-	),
-	query: Type.Optional(
-		Type.Record(Type.String(), Type.String(), {
+	method: opt(stringEnum(GRAPH_METHODS, { description: "HTTP method (default GET)" })),
+	account: opt(str({ description: "Connected account email. Required when more than one account is connected." })),
+	query: opt(
+		map(str(), {
 			description: 'Query parameters, e.g. {"$top": "10", "$select": "subject,from"}',
 		}),
 	),
-	body: Type.Optional(Type.Any({ description: "Request body. Objects are sent as JSON." })),
-	headers: Type.Optional(
-		Type.Record(Type.String(), Type.String(), {
+	body: opt(unknown({ description: "Request body. Objects are sent as JSON." })),
+	headers: opt(
+		map(str(), {
 			description:
 				'Extra request headers, e.g. {"ConsistencyLevel": "eventual"}. Authorization is set automatically.',
 		}),
@@ -131,12 +145,12 @@ const MicrosoftGraphParams = Type.Object({
 
 type MicrosoftGraphInput = Static<typeof MicrosoftGraphParams>;
 
-const MicrosoftGraphOutput = Type.Object({
-	account: Type.String(),
-	status: Type.Number(),
-	headers: Type.Record(Type.String(), Type.String()),
-	bodyEncoding: StringEnum(["json", "text", "base64", "empty"] as const),
-	body: Type.Any(),
+const MicrosoftGraphOutput = obj({
+	account: str(),
+	status: num(),
+	headers: map(str()),
+	bodyEncoding: stringEnum(["json", "text", "base64", "empty"]),
+	body: unknown() as Schema<JsonValue>,
 });
 
 type GraphResult = Static<typeof MicrosoftGraphOutput>;
@@ -199,7 +213,7 @@ export default function microsoft365Extension(pi: ExtensionAPI) {
 		outputSchema: MicrosoftGraphOutput,
 		executionMode: "parallel",
 
-		async execute(_toolCallId, params, signal) {
+		async execute(_toolCallId, params: MicrosoftGraphInput, signal) {
 			const result = await callMicrosoftGraph(params, signal);
 			const { text, fullOutputPath } = await formatGraphResultForModel(result, params);
 			return {
@@ -259,7 +273,7 @@ async function callMicrosoftGraph(params: MicrosoftGraphInput, signal: AbortSign
 	let body: string | undefined;
 	if (params.body !== undefined && params.body !== null && method !== "GET") {
 		const isText = typeof params.body === "string";
-		body = isText ? params.body : JSON.stringify(params.body);
+		body = typeof params.body === "string" ? params.body : JSON.stringify(params.body);
 		if (!hasHeader(headers, "content-type")) {
 			headers["Content-Type"] = isText ? "text/plain" : "application/json";
 		}
