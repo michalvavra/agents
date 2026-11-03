@@ -5,10 +5,12 @@ Configuration for AI coding agents.
 ## Layout
 
 - `AGENTS.md`: shared instructions, symlinked into every agent.
-- `skills/`: shared skills, symlinked to `~/.agents/skills`. Pi, Codex and fx read this directory.
+- `skills/`: my own skills. `scripts/link-skills.sh` links each one into `~/.agents/skills` (Pi, Codex, OpenCode, fx) and `~/.claude/skills` (Claude Code).
+- `scripts/`: setup scripts.
 - `agents/pi/`: Pi extensions (`extensions/`) and prompt templates (`prompts/`).
 - `archive/`: retired skills and extensions, kept for reference and not loaded.
 - `tests/`: tests for the Pi extensions.
+- Third-party skills are not tracked here. `~/.agents/skills` is managed by Vercel's [skills][skills] CLI: install with `npx skills add <source> -g`, update with `npx skills update -g` (installs are recorded in `~/.agents/.skill-lock.json`). The Plannotator installer and `rex skill setup` also install skills there.
 - Agent-specific skills stay in each agent's own skills directory (`~/.pi/agent/skills`, `~/.codex/skills`, `~/.claude/skills`, `~/.fx/skills`) and are not tracked here.
 
 ## Setup
@@ -18,13 +20,15 @@ git clone https://github.com/michalvavra/agents.git
 cd agents
 ```
 
-Run the commands below from the repository root. Back up any existing `AGENTS.md`/`CLAUDE.md` first; `ln -sf` replaces it. Move existing `~/.agents/skills` or `~/.pi/agent/prompts` directories away too; `ln -sfn` does not replace a real directory and puts the link inside it instead.
+Run the commands below from the repository root. Back up any existing `AGENTS.md`/`CLAUDE.md` first; `ln -sf` replaces it. Move an existing `~/.pi/agent/prompts` directory away too; `ln -sfn` does not replace a real directory and puts the link inside it instead.
 
 ### Skills
 
 ```bash
-ln -sfn "$PWD/skills" ~/.agents/skills
+./scripts/link-skills.sh
 ```
+
+The script links each skill in `skills/` into `~/.agents/skills` and `~/.claude/skills`, and removes links to skills that no longer exist. It touches only links into this repository, so installed third-party skills stay. Run it again after adding or removing a skill. `~/.agents/skills` must be a real directory, not a link to `skills/`.
 
 ### [Pi][pi-coding-agent]
 
@@ -87,11 +91,10 @@ ln -sf "$PWD/AGENTS.md" ~/.codex/AGENTS.md
 
 ### [Claude Code][claude-code]
 
-Claude Code does not read `~/.agents/skills`, so link each shared skill.
+Claude Code does not read `~/.agents/skills`; `scripts/link-skills.sh` links the skills into `~/.claude/skills`.
 
 ```bash
 ln -sf "$PWD/AGENTS.md" ~/.claude/CLAUDE.md
-for d in skills/*/; do ln -sfn "$PWD/${d%/}" ~/.claude/skills/; done
 ```
 
 ### [fx][fx]
@@ -125,3 +128,4 @@ npm run format:check
 [codex]: https://developers.openai.com/codex
 [claude-code]: https://code.claude.com/
 [fx]: https://fx.sh/
+[skills]: https://skills.sh/
