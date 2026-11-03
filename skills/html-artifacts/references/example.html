@@ -16,6 +16,23 @@
     & li { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; }
     & time { color: var(--muted); font-variant-numeric: tabular-nums; }
   }
+  /* Pele theme from components.md ("Diagram") */
+  .mermaid {
+    --pele-bg: var(--paper);
+    --pele-fg: var(--ink);
+    --pele-muted: var(--muted);
+    --pele-line: var(--muted);
+    --pele-surface: var(--surface);
+    --pele-surface-alt: var(--line);
+    --pele-border: var(--border);
+    --pele-accent: var(--blue);
+    --pele-critical: var(--red);
+    --pele-error: var(--red);
+    --pele-font: var(--sans);
+    --pele-font-mono: var(--mono);
+    --pele-radius: var(--radius);
+    & .pele-node:is(.ok, .warn, .bad, .info) > :not(text) { stroke: var(--tone); stroke-width: 2; }
+  }
 </style>
 </head>
 <body>
@@ -72,6 +89,13 @@
     </div>
   </div>
 
+  <p>The API now hands each order to a queue; a worker calls the tax service.</p>
+  <figure>
+    <pre class="mermaid">flowchart LR
+  api[API] -->|order| queue[Queue]:::info -->|job| tax[Tax worker]</pre>
+    <figcaption>Order flow after the change. The queue (highlighted) is new.</figcaption>
+  </figure>
+
   <figure class="code">
     <figcaption>latency.sql</figcaption>
     <pre><code class="language-sql">-- p50 per region
@@ -126,6 +150,21 @@ GROUP BY region;</code></pre>
     const tpl = document.createElement("template");
     tpl.innerHTML = html;
     code.innerHTML = tpl.content.querySelector("code").innerHTML;
+  }
+</script>
+<script type="module">
+  // Mermaid diagrams with pele@1.12.0. The pre stays if the CDN or the syntax fails.
+  const { mountAsync } = await import("https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/esm/lazy.js");
+  for (const pre of document.querySelectorAll("pre.mermaid")) {
+    const box = document.createElement("div");
+    box.className = "mermaid";
+    pre.replaceWith(box);
+    try {
+      const diagram = await mountAsync(box, pre.textContent, { zoom: { controls: false } });
+      if (!diagram.error) continue;
+      diagram.destroy();
+    } catch {}
+    box.replaceWith(pre);
   }
 </script>
 </body>

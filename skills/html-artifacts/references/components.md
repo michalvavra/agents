@@ -141,7 +141,61 @@ Status of a list of tasks or review criteria. Used by code reviews and technical
 
 ## Diagram
 
-Boxes and arrows as inline SVG, for architecture and data flow. SVG attributes can't read `var()`, so color comes from classes. Give the SVG a `viewBox` and a `width` equal to the viewBox width (so it never scales text up), a `role="img"` and an `aria-label` that says what the diagram shows. Put a wide diagram in `.scroll` with a `min-inline-size` so its text stays readable on a phone, and put the same information in a table or list nearby.
+### Mermaid via Pele
+
+The default for flowcharts, sequence and state diagrams. Rules and markup are in `SKILL.md` ("Diagrams"). Paste this theme into the second `<style>`. It maps Pele's `--pele-*` variables to role tokens, so diagrams follow light and dark without a re-render, and gives `:::ok` `:::warn` `:::bad` `:::info` nodes a tone border.
+
+```html
+<figure>
+  <pre class="mermaid">flowchart LR
+  api[API] -->|order| queue[Queue]:::info -->|job| tax[Tax worker]</pre>
+  <figcaption>Order flow after the change. The queue (highlighted) is new.</figcaption>
+</figure>
+```
+
+```css
+.mermaid {
+  --pele-bg: var(--paper);
+  --pele-fg: var(--ink);
+  --pele-muted: var(--muted);
+  --pele-line: var(--muted);
+  --pele-surface: var(--surface);
+  --pele-surface-alt: var(--line);
+  --pele-border: var(--border);
+  --pele-accent: var(--blue);
+  --pele-critical: var(--red);
+  --pele-error: var(--red);
+  --pele-font: var(--sans);
+  --pele-font-mono: var(--mono);
+  --pele-radius: var(--radius);
+  & .pele-node:is(.ok, .warn, .bad, .info) > :not(text) { stroke: var(--tone); stroke-width: 2; }
+}
+```
+
+Pinned script, before `</body>`. It swaps each `pre.mermaid` for a rendered `div.mermaid` and puts the `pre` back if the CDN or the syntax fails:
+
+```html
+<script type="module">
+  const { mountAsync } = await import("https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/esm/lazy.js");
+  for (const pre of document.querySelectorAll("pre.mermaid")) {
+    const box = document.createElement("div");
+    box.className = "mermaid";
+    pre.replaceWith(box);
+    try {
+      const diagram = await mountAsync(box, pre.textContent, { zoom: { controls: false } });
+      if (!diagram.error) continue;
+      diagram.destroy();
+    } catch {}
+    box.replaceWith(pre);
+  }
+</script>
+```
+
+`zoom: { controls: false }` keeps pinch zoom on diagrams that shrink to fit, without buttons.
+
+### Inline SVG
+
+For layouts Mermaid can't express. Boxes and arrows as inline SVG, for architecture and data flow. SVG attributes can't read `var()`, so color comes from classes. Give the SVG a `viewBox` and a `width` equal to the viewBox width (so it never scales text up), a `role="img"` and an `aria-label` that says what the diagram shows. Put a wide diagram in `.scroll` with a `min-inline-size` so its text stays readable on a phone, and put the same information in a table or list nearby.
 
 ```html
 <figure>

@@ -20,7 +20,7 @@ One HTML file, semantic markup, one shared stylesheet. The look is quiet and typ
 2. Start from the skeleton. Put the full contents of `styles.css` into the first `<style>`.
 3. Write plain semantic HTML: `main`, `h1`–`h4`, `p`, `ul`, `table`, `figure`, `details`. Most pages need only a few classes.
 4. Put artifact-specific CSS in the second `<style>`: snippets from `components.md`, then your own. See [Extending](#extending).
-5. Keep data inline (HTML, or JSON in `<script type="application/json" id="">`). No frameworks and no build step. The only external request allowed is syntax highlighting.
+5. Keep data inline (HTML, or JSON in `<script type="application/json" id="">`). No frameworks and no build step. The only external requests allowed are syntax highlighting and diagrams (Pele).
 
 ```html
 <!doctype html>
@@ -182,6 +182,44 @@ Use [`@pierre/highlights`](https://www.jsdelivr.com/package/npm/@pierre/highligh
 
 Only the token spans are copied, so the kit's `pre` styling is kept. Token colors are `light-dark()` pairs, so they follow the color scheme. If the CDN fails, the code still shows as plain text. Don't run it on `pre.diff`; see `components.md`.
 
+## Diagrams (Mermaid via Pele)
+
+Use [Pele](https://pele.run) (`pele` on npm), Obsidian's Mermaid renderer, pinned to `1.12.0`, for flowcharts, sequence diagrams and state diagrams. It replaces hand-built SVG; keep inline SVG (`components.md`) for layouts Mermaid can't express. Write Mermaid in `<pre class="mermaid">` inside a `figure`, with no `language-` class:
+
+```html
+<figure>
+  <pre class="mermaid">flowchart LR
+  api[API] -->|order| queue[Queue] -->|job| tax[Tax worker]</pre>
+  <figcaption>Order flow after the change.</figcaption>
+</figure>
+```
+
+Put this before `</body>`. The `lazy` entry is 3 kB and fetches only the diagram types on the page:
+
+```html
+<script type="module">
+  const { mountAsync } = await import("https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/esm/lazy.js");
+  for (const pre of document.querySelectorAll("pre.mermaid")) {
+    const box = document.createElement("div");
+    box.className = "mermaid";
+    pre.replaceWith(box);
+    try {
+      const diagram = await mountAsync(box, pre.textContent, { zoom: { controls: false } });
+      if (!diagram.error) continue;
+      diagram.destroy();
+    } catch {}
+    box.replaceWith(pre);
+  }
+</script>
+```
+
+If the CDN or the Mermaid syntax fails, the source stays visible as a `pre`. `mount()` re-lays out on resize and turns wide `LR` flowcharts vertical below 640px. Pele colors come from `--pele-*` CSS variables, so paste the Pele theme from `components.md` ("Diagram"); it maps them to role tokens, so diagrams follow light and dark with no re-render and no `matchMedia`.
+
+- Keep diagrams small: about 10 nodes. Split a bigger one, or use a table.
+- Label every edge with what moves along it (`-->|order|`).
+- Put the key facts in a table or list too. The Mermaid source stays in the HTML file, but the rendered page shows only SVG.
+- Color a node only with a tone class: `queue[Queue]:::info`, `:::ok`, `:::warn`, `:::bad`. Leave out `style`, `classDef` and `linkStyle`; their hex colors ignore dark mode.
+
 ## Agent-readable
 
 Other agents may read the artifact too. Keep the data easy to extract:
@@ -200,6 +238,7 @@ Other agents may read the artifact too. Keep the data easy to extract:
 - Sources and caveats are footnotes, not a footer.
 - Data lives in tables or JSON blocks, not only in prose or charts.
 - Numbers use `.num`. Wide tables are wrapped in `.scroll`.
+- Diagrams are `pre.mermaid` rendered by pinned Pele, with the Pele theme pasted, and read as text if the CDN fails.
 - Color always carries meaning (tone) and never decorates.
 - New CSS passes the good-css "In all CSS" rules.
 - Check that the page reads well at 390px and 1280px wide, in both light and dark.
