@@ -53,6 +53,7 @@ Extensions in `agents/pi/extensions/`:
 - `filter-output.ts`: redacts secrets (API tokens, passwords, private keys, `.env` contents) from tool results.
 - `google-workspace.ts`: `/google-workspace [email]|status|logout|refresh` connects Google accounts (Radius broker by default, or your own OAuth client from `~/.pi/google-workspace/config.json` with `email`, `client_id`, `client_secret`, `scopes`). The `google_workspace` tool calls any `https://*.googleapis.com` API as a connected account, refreshes tokens itself, and returns `{ account, status, headers, bodyEncoding, body }` to codemode scripts.
 - `microsoft-365.ts`: `/microsoft-365 [email]|status|logout|refresh` connects Microsoft 365 accounts (OAuth PKCE with a public Entra app). The `microsoft_graph` tool calls Microsoft Graph as a connected account, refreshes tokens itself, and returns `{ account, status, headers, bodyEncoding, body }` to codemode scripts. Accounts are configured in `~/.pi/microsoft-365/config.json` (or `$MICROSOFT_365_CONFIG`); see below.
+- `rex.ts`: inside a Rex terminal, adds Rex's session context (`rex __internal session-start --agent pi`) to the system prompt, like the SessionStart hook Rex installs for Claude Code and Codex.
 - `save-md.ts`: `/save-md <name>` saves the latest assistant response as Markdown.
 - `session-breakdown.ts`: `/session-breakdown` shows usage over the last 7/30/90 days (sessions, messages, tokens, cost by model).
 - `todos.ts`: file-based todos in `.pi/todos` via the `todo` tool and `/todos` command.
