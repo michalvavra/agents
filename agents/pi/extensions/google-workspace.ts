@@ -47,6 +47,7 @@ import {
 import type { JsonValue } from "@earendil-works/pi-ai";
 
 const STATUS_KEY = "google-workspace";
+const PROMPT_SECTION = "google_workspace";
 
 const BASE_DIR = path.join(os.homedir(), ".pi", "google-workspace");
 const TOKENS_DIR = process.env.GOOGLE_WORKSPACE_TOKENS_DIR || path.join(BASE_DIR, "tokens");
@@ -193,25 +194,22 @@ export default function googleWorkspaceExtension(pi: ExtensionAPI) {
 		ctx.ui.setStatus(STATUS_KEY, undefined);
 	});
 
+	// Set a prompt section instead of returning `systemPrompt`: a returned prompt replaces the
+	// whole prompt for the run and drops sections that later extensions add.
 	pi.on("before_agent_start", (event) => {
 		const connections = listConnections();
 		if (connections.length === 0) {
-			return {
-				systemPrompt:
-					event.systemPrompt +
-					"\n\nGoogle Workspace: no locally connected accounts were found. If the user asks for Gmail, Google Calendar, Drive, Docs, Sheets, Slides, Contacts, or Meet access, ask them to run /google-workspace first.",
-			};
+			event.systemPromptOptions.sections[PROMPT_SECTION] =
+				"Google Workspace: no locally connected accounts were found. If the user asks for Gmail, Google Calendar, Drive, Docs, Sheets, Slides, Contacts, or Meet access, ask them to run /google-workspace first.";
+			return;
 		}
 
 		const lines = connections.map((connection) => `- ${connection.email}`);
-		return {
-			systemPrompt:
-				event.systemPrompt +
-				"\n\nGoogle Workspace local connections:\n" +
-				`${lines.join("\n")}\n` +
-				"When the user asks for Google Workspace data (Gmail, Calendar, Drive, Docs, Sheets, Slides, Contacts, Meet) for a specific email account, use the matching connected account above with the google_workspace tool. " +
-				"The tool handles credentials; do not read token files or expose token values. If they do not specify an account and exactly one account is connected, use it by default; otherwise ask which account.",
-		};
+		event.systemPromptOptions.sections[PROMPT_SECTION] =
+			"Google Workspace local connections:\n" +
+			`${lines.join("\n")}\n` +
+			"When the user asks for Google Workspace data (Gmail, Calendar, Drive, Docs, Sheets, Slides, Contacts, Meet) for a specific email account, use the matching connected account above with the google_workspace tool. " +
+			"The tool handles credentials; do not read token files or expose token values. If they do not specify an account and exactly one account is connected, use it by default; otherwise ask which account.";
 	});
 
 	pi.registerTool({

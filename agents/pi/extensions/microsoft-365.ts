@@ -39,6 +39,7 @@ import {
 import type { JsonValue } from "@earendil-works/pi-ai";
 
 const STATUS_KEY = "microsoft-365";
+const PROMPT_SECTION = "microsoft_365";
 
 const BASE_DIR = path.join(os.homedir(), ".pi", "microsoft-365");
 const TOKENS_DIR = process.env.MICROSOFT_365_TOKENS_DIR || path.join(BASE_DIR, "tokens");
@@ -173,25 +174,22 @@ export default function microsoft365Extension(pi: ExtensionAPI) {
 		ctx.ui.setStatus(STATUS_KEY, undefined);
 	});
 
+	// Set a prompt section instead of returning `systemPrompt`: a returned prompt replaces the
+	// whole prompt for the run and drops sections that later extensions add.
 	pi.on("before_agent_start", (event) => {
 		const connections = listConnections();
 		if (connections.length === 0) {
-			return {
-				systemPrompt:
-					event.systemPrompt +
-					"\n\nMicrosoft 365: no locally connected accounts were found. If the user asks for Outlook mail, Calendar, Teams chat, OneDrive, SharePoint, or other Microsoft Graph access, ask them to run /microsoft-365 first.",
-			};
+			event.systemPromptOptions.sections[PROMPT_SECTION] =
+				"Microsoft 365: no locally connected accounts were found. If the user asks for Outlook mail, Calendar, Teams chat, OneDrive, SharePoint, or other Microsoft Graph access, ask them to run /microsoft-365 first.";
+			return;
 		}
 
 		const lines = connections.map((connection) => `- ${connection.email}`);
-		return {
-			systemPrompt:
-				event.systemPrompt +
-				"\n\nMicrosoft 365 local connections:\n" +
-				`${lines.join("\n")}\n` +
-				"When the user asks for Microsoft 365 data (Outlook mail, Calendar, Teams chat, OneDrive, SharePoint) for a specific email account, use the matching connected account above with the microsoft_graph tool. " +
-				"The tool handles credentials; do not read token files or expose token values. If they do not specify an account and exactly one account is connected, use it by default; otherwise ask which account.",
-		};
+		event.systemPromptOptions.sections[PROMPT_SECTION] =
+			"Microsoft 365 local connections:\n" +
+			`${lines.join("\n")}\n` +
+			"When the user asks for Microsoft 365 data (Outlook mail, Calendar, Teams chat, OneDrive, SharePoint) for a specific email account, use the matching connected account above with the microsoft_graph tool. " +
+			"The tool handles credentials; do not read token files or expose token values. If they do not specify an account and exactly one account is connected, use it by default; otherwise ask which account.";
 	});
 
 	pi.registerTool({
